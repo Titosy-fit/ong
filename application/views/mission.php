@@ -46,7 +46,7 @@
                                     </div>
                                     <div class="mt-2 _boutton">
                                         <button type="button" class="btn btn-info" id="modification"><i class="fas fa-pencil-alt"></i> Modifier</button>
-                                        <button type="button" id="TM-valider" class="d-none">Ok</button>        
+                                        <button type="button" id="TM-valider" class="d-none">Ok</button>
                                     </div>
                                 </form>
                             </div>
@@ -137,16 +137,36 @@
                 </div>
 
                 <form action="<?= base_url('Mission/register') ?>" method="post">
-                    <input type="hidden" id="idagent" name="idagent">
+                    <!-- Selection Agent direct sur la page -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Agent bénéficiaire :</label>
+                        <div class="input-group">
+                            <input type="text" id="agent_search" class="form-control" placeholder="Tapez le nom ou prénom de l'agent...">
+                            <button type="button" class="btn btn-info" id="btn_search_agent">
+                                <i class="fa-solid fa-magnifying-glass"></i> Rechercher
+                            </button>
+                        </div>
+                        <div id="agent_results" class="mt-2" style="max-height: 250px; overflow-y: auto; display: none; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                        </div>
+                        <div id="selected_agent_info" class="mt-2 alert alert-success d-none">
+                            <i class="fa-solid fa-user-check"></i> <strong>Agent sélectionné :</strong>
+                            <span id="selected_agent_name"></span>
+                            <button type="button" class="btn btn-sm btn-danger float-end" id="clear_agent">
+                                <i class="fa-solid fa-times"></i> Annuler
+                            </button>
+                        </div>
+                        <input type="hidden" id="idagent" name="idagent">
+                    </div>
+
                     <div class="row mb-2">
                         <div class="col">
                             <label class="form-label">Type :</label>
-                            <select  name="typeMission" id="typeMission" class="form-control input_form-control" required>
+                            <select name="typeMission" id="typeMission" class="form-control input_form-control" required>
                                 <option value="Mission">Mission</option>
                                 <option value="Activité">Activité</option>
                             </select>
                         </div>
-                       
+
                     </div>
                     <div class="row mb-2">
                         <div class="col">
@@ -156,7 +176,7 @@
 
                             <p class="text-danger d-none" id="ms_projet">Veuillez choisir le projet et l'activité.</p>
                         </div>
-                       
+
                     </div>
 
                     <div class="row mb-2">
@@ -164,7 +184,7 @@
                             <label class="form-label">Titre du projet :</label>
                             <input name="titreprojet" id="titreprojet" type="text" class="form-control input_form-control " readonly>
                         </div>
-                        
+
                         <div class="col-4">
                             <div>
                                 <label class="form-label">Choisir les budgets à utilisés :</label>
@@ -184,7 +204,7 @@
                         <input name="avance" id="avance" type="text" class="form-control input_form-control " required>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Objet  :</label>
+                        <label class="form-label">Objet :</label>
                         <input name="objet" id="objet" type="text" class="form-control input_form-control " required>
                     </div>
 
@@ -219,7 +239,7 @@
 
                     <div class="mb-2">
                         <label class="form-label">Date de réception de l'avance :</label>
-                        <input name="date_reception" id="date_reception" type="date" class="form-control input_form-control "  required>
+                        <input name="date_reception" id="date_reception" type="date" class="form-control input_form-control " required>
                     </div>
 
                     <div class="_boutton">
@@ -240,15 +260,14 @@
                             <button type="button" class="btn d-none" id="T-valider">Valider</button>
                         <?php endif  ?>
                     </div>
-                    
-                    
-                
+
+
+
                     <?php if ($this->session->userdata('added_projet')): ?>
                         <script>
-                        window.addEventListener('DOMContentLoaded', () => {
-                            Myalert.added();
-                        });
-                        
+                            window.addEventListener('DOMContentLoaded', () => {
+                                Myalert.added();
+                            });
                         </script>
                         <?php $this->session->unset_userdata('added_projet'); ?>
                     <?php endif; ?>
@@ -267,9 +286,9 @@
                 <?php endif; ?>
                 <?php $this->session->unset_userdata('delete_projet') ?>
 
-                <h5>Filtre :</h5>
+                <!-- <h5>Filtre :</h5> -->
                 <!-- Recherche par projet  -->
-                <?php if (count($projets)) : ?>
+                <!-- <?php if (count($projets)) : ?>
                 <?php endif ?>
                 <div class="owl-carousel">
                     <?php foreach ($projets as $key => $projet) :  ?>
@@ -288,7 +307,7 @@
                         </form>
 
                     <?php endforeach ?>
-                </div>
+                </div> -->
                 <!-- Recherche par projet  -->
                 <!-- Filtre  -->
                 <div class="filtre_mission mt-3">
@@ -307,7 +326,7 @@
                         <thead class="table-info">
                             <tr>
                                 <th>Code projet</th>
-                               
+
                                 <th>Objet du mission</th>
                                 <th>Numero</th>
                                 <th>Agent</th>
@@ -322,15 +341,15 @@
                                 <?php endif  ?>
                             </tr>
                         </thead>
-                        <?php $datas = $data['mission'] ; 
-                             
-                         ?>
+                        <?php $datas = $data['mission'];
+
+                        ?>
                         <tbody class="">
-                            
+
                             <?php foreach ($datas as $key => $mission) :  ?>
                                 <tr class="<?= (isset($_POST['filtre']))  ? 'table-danger' : '' ?>">
                                     <td><?= $mission->codeprojet  ?></td>
-                                    
+
                                     <td><?= $mission->objet_mission  ?></td>
                                     <td>
                                         <p class="m-0"><span style="display: inline-block; width:40px ">ASM </span>: <?= $mission->numero_asm  ?></p>
@@ -352,13 +371,13 @@
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
 
-                                               
+
                                             <?php else : ?>
 
                                                 <a href="#" data-toggle="modal" data-target="#details_modal" class="btn btn-secondary detail" data-id="<?= $mission->idmission ?>"><i class="fas fa-list"></i></a>
                                                 <button class="btn btn-danger delete" type="button" data-id="<?= $mission->idmission ?>">
                                                     <i class="fa-solid fa-trash"></i>
-                                                </button>   
+                                                </button>
 
                                             <?php endif; ?>
                                         </td>
@@ -367,11 +386,12 @@
                             <?php endforeach ?>
                         </tbody>
                     </table>
-<?php if (!empty($data['lien'])): ?>
-    <div class="d-flex justify-content-center mt-4">
-        <?= $data['lien'] ?>
-    </div>
-<?php endif; ?>                </div>
+                    <?php if (!empty($data['lien'])): ?>
+                        <div class="d-flex justify-content-center mt-4">
+                            <?= $data['lien'] ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>

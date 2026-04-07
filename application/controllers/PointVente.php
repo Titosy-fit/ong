@@ -68,13 +68,13 @@ class PointVente extends CI_Controller
         if (isset($_POST['denomination']) && $_POST['denomination'] != '')
             $denomination =  strip_tags(trim($this->input->post('denomination')));
 
-         $idprojet = 0;
+        $idprojet = 0;
         if (isset($_POST['projet']) && $_POST['projet'] != '') {
 
-            $idprojet = intval($_POST['projet']) ;
+            $idprojet = intval($_POST['projet']);
         }
 
-        
+
         $tel = $this->pv_model->verifContact($contact);
         // $adr = $this->pv_model->verifAddress($address);
         $denom = $this->pv_model->verifdenom($denomination);
@@ -86,10 +86,10 @@ class PointVente extends CI_Controller
         } else {
             $data = [
                 'adressPv' => ucfirst(strtolower($address)),
-                'contactPv' => $contact , 
+                'contactPv' => $contact,
                 'idadmin' => $_SESSION['idadmin'],
                 'denomination_pv' => $denomination,
-                'idprojet'=>$idprojet
+                'idprojet' => $idprojet
             ];
             $this->pv_model->ajoutPV($data);
             $this->session->set_userdata('ajout', 'Ajout réussi');
@@ -107,16 +107,16 @@ class PointVente extends CI_Controller
         if (isset($_POST['denomination']) && $_POST['denomination'] != '')
             $denomination =  strip_tags(trim($this->input->post('denomination')));
 
-        $idProjet = 0 ; 
+        $idProjet = 0;
         //projet-edit
-        if(isset($_POST['projet-edit']) && $_POST['projet-edit'] != '') {
-            $idProjet  = intval($_POST['projet-edit']) ;
+        if (isset($_POST['projet-edit']) && $_POST['projet-edit'] != '') {
+            $idProjet  = intval($_POST['projet-edit']);
         }
         $data = [
             'adressPv' => ucfirst(strtolower($address)),
-            'contactPv' => $contact ,
+            'contactPv' => $contact,
             'denomination_pv' => $denomination,
-            'idprojet'=>$idProjet
+            'idprojet' => $idProjet
         ];
 
         $this->pv_model->editPv($data, $id);

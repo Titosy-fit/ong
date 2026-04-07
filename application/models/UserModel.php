@@ -44,21 +44,21 @@ class UserModel extends CI_Model
 
     //     return $query->result();
     // }
- public function get_authors($limit, $start)
-{
-    $this->db->select('user.*, 
+    public function get_authors($limit, $start)
+    {
+        $this->db->select('user.*, 
                       projet.codeprojet, 
                       projet.titreprojet, 
                       poste.designation_poste')
-             ->from('user')
-             ->join('projet', 'projet.idprojet = user.idprojet', 'left')
-             ->join('poste', 'poste.idposte = user.idposte', 'inner')
-             ->where('user.idadmin', $_SESSION['idadmin'])
-             ->order_by('user.idUser', 'desc')
-             ->limit($limit, $start);
+            ->from('user')
+            ->join('projet', 'projet.idprojet = user.idprojet', 'left')
+            ->join('poste', 'poste.idposte = user.idposte', 'inner')
+            ->where('user.idadmin', $_SESSION['idadmin'])
+            ->order_by('user.idUser', 'desc')
+            ->limit($limit, $start);
 
-    return $this->db->get()->result();
-}
+        return $this->db->get()->result();
+    }
     public function insertUser($data)
     {
         $this->db->insert('user', $data);
@@ -152,16 +152,17 @@ class UserModel extends CI_Model
         return $data;
     }
 
-    public function searchUser($mot = '' , $limit = '', $start = '' , $type = '') 
+    public function searchUser($mot = '', $limit = '', $start = '', $type = '')
     {
 
         $this->db->select('*');
         $this->db->from('user');
-        $this->db->join('pointvente', 'pointvente.idPointVente = user.idPointVente')
-        ->join('poste', 'poste.idposte = user.idposte', 'inner');
+        // $this->db->join('pointvente', 'pointvente.idPointVente = user.idPointVente')
+        $this->db->join('pointvente', '1 = 1')
+            ->join('poste', 'poste.idposte = user.idposte', 'inner');
         $this->db->where('user.idadmin', $_SESSION['idadmin']);
         $this->db->where('pointvente.idadmin', $_SESSION['idadmin']);
-        
+
         if ($mot != '') {
             $this->db->where('user.nomUser like', $mot);
             $this->db->or_where('user.prenomUser like', $mot);

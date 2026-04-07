@@ -2,7 +2,7 @@
 
 class User extends CI_Controller
 {
-    private $postes ;
+    private $postes;
     public function __construct()
     {
         parent::__construct();
@@ -11,12 +11,12 @@ class User extends CI_Controller
         $this->load->model("DispatchModel", "dispatch");
         $this->load->model('PointVente_model', 'pv');
 
-        $this->postes = $this->poste->getposte() ; 
+        $this->postes = $this->poste->getposte();
         if ($_SESSION['user_type'] != 'admin') {
-            redirect('stock') ; 
+            redirect('stock');
         }
     }
-     
+
     // public function index()
     // {
     //     $this->jail();
@@ -29,11 +29,11 @@ class User extends CI_Controller
     //         $config['query_string_segment'] = 'page';
     //         $config['use_page_numbers'] = TRUE;
     //         $this->pagination->initialize($config);
-    
+
     //         $page = isset($_GET['page']) ? $_GET['page'] : 0;
-    
+
     //         $datapag["links"] = $this->pagination->create_links();
-    
+
     //         if ((int)$page == 0) {
     //             $start = (int)$page * (int)$config["per_page"];
     //         } else {
@@ -41,13 +41,13 @@ class User extends CI_Controller
     //         }
     //         $datapag['user'] = $this->user->get_authors($config["per_page"], $start);
 
-    
+
     //         $data['title'] = 'Utilisateur';
     //         $data['css'] = 'stock.css';
     //         $js['js'] = 'user.js';
-    
+
     //         $pv = $this->pv->getAllPv();
-            
+
     //         $this->load->view('templates/header', $data);
     //         $this->load->view('templates/sidebar', ['user' => true]);
     //         $this->load->view('templates/tete');
@@ -66,63 +66,63 @@ class User extends CI_Controller
 
     // }
     public function index()
-{
-    $this->jail();
+    {
+        $this->jail();
 
-    if ($_SESSION['user_type'] !== 'admin') {
-        redirect('dispatch');  // ou 'stock' selon ta logique précédente
+        if ($_SESSION['user_type'] !== 'admin') {
+            redirect('dispatch');  // ou 'stock' selon ta logique précédente
+        }
+
+        // Configuration de la pagination
+        $config = [];
+        $config["base_url"]             = base_url() . 'user';
+        $config["total_rows"]           = $this->user->get_count();
+        $config["per_page"]             = PAGINATION;
+        $config['page_query_string']    = TRUE;
+        $config['query_string_segment'] = 'page';
+        $config['use_page_numbers']     = TRUE;
+
+        $this->pagination->initialize($config);
+
+        // Gestion de la page courante
+        $page = $this->input->get('page') ? (int)$this->input->get('page') : 1;
+        $start = ($page - 1) * $config["per_page"];
+
+        $datapag = [];
+        $datapag["links"] = $this->pagination->create_links();
+        $datapag['user']  = $this->user->get_authors($config["per_page"], $start);
+
+        // Chargement des projets (remplace l'ancien chargement des PV)
+        $this->load->model('ProjetModel', 'projet');
+        $projets = $this->projet->getAllForSelect();
+
+        // (Optionnel) Si tu as encore besoin des PV temporairement pour debug
+        // $pv = $this->pv->getAllPv();
+
+        // Données pour la vue
+        $data = [
+            'title' => 'Utilisateur',
+            'css'   => 'stock.css'
+        ];
+
+        $js = ['js' => 'user.js'];
+
+        // Chargement des vues
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', ['user' => true]);
+        $this->load->view('templates/tete');
+
+        $this->load->view('user', [
+            'data'     => $datapag,
+            'projets'  => $projets,           // ← Résout l'erreur Undefined variable $projets
+            'postes'   => $this->postes,
+
+            // Optionnel : si certaines parties de la vue utilisent encore $pv
+            // 'pv'    => $pv ?? [],
+        ]);
+
+        $this->load->view('templates/footer', $js);
     }
-
-    // Configuration de la pagination
-    $config = [];
-    $config["base_url"]             = base_url() . 'user';
-    $config["total_rows"]           = $this->user->get_count();
-    $config["per_page"]             = PAGINATION;
-    $config['page_query_string']    = TRUE;
-    $config['query_string_segment'] = 'page';
-    $config['use_page_numbers']     = TRUE;
-
-    $this->pagination->initialize($config);
-
-    // Gestion de la page courante
-    $page = $this->input->get('page') ? (int)$this->input->get('page') : 1;
-    $start = ($page - 1) * $config["per_page"];
-
-    $datapag = [];
-    $datapag["links"] = $this->pagination->create_links();
-    $datapag['user']  = $this->user->get_authors($config["per_page"], $start);
-
-    // Chargement des projets (remplace l'ancien chargement des PV)
-    $this->load->model('ProjetModel', 'projet');
-    $projets = $this->projet->getAllForSelect();
-
-    // (Optionnel) Si tu as encore besoin des PV temporairement pour debug
-    // $pv = $this->pv->getAllPv();
-
-    // Données pour la vue
-    $data = [
-        'title' => 'Utilisateur',
-        'css'   => 'stock.css'
-    ];
-
-    $js = ['js' => 'user.js'];
-
-    // Chargement des vues
-    $this->load->view('templates/header', $data);
-    $this->load->view('templates/sidebar', ['user' => true]);
-    $this->load->view('templates/tete');
-
-    $this->load->view('user', [
-        'data'     => $datapag,
-        'projets'  => $projets,           // ← Résout l'erreur Undefined variable $projets
-        'postes'   => $this->postes,
-
-        // Optionnel : si certaines parties de la vue utilisent encore $pv
-        // 'pv'    => $pv ?? [],
-    ]);
-
-    $this->load->view('templates/footer', $js);
-}
 
     // public function registerUser()
     // {
@@ -162,84 +162,84 @@ class User extends CI_Controller
     //             'pass' => hash_it('123456') , 
     //             'idadmin' => $idadmin
     //         ];
-    
+
     //         $this->user->insertUser($data);
     //         $this->session->set_flashdata('ajout', 'Ajout réussie');
     //     }
     //     redirect('user') ;
     // }
-public function registerUser()
-{
-    $nom    = trim(strip_tags($this->input->post('nom', true)));
-    $prenom = trim(strip_tags($this->input->post('prenom', true)));
-    $adresse = trim(strip_tags($this->input->post('adresse', true)));
-    $email  = trim(strip_tags($this->input->post('email', true)));
-    $numero = trim(strip_tags($this->input->post('numero', true)));
-    $poste  = trim(strip_tags($this->input->post('poste', true)));
-    $idprojet = trim($this->input->post('idprojet', true) ?? '');
-    $roles  = trim($this->input->post('role', true) ?? '');
+    public function registerUser()
+    {
+        $nom    = trim(strip_tags($this->input->post('nom', true)));
+        $prenom = trim(strip_tags($this->input->post('prenom', true)));
+        $adresse = trim(strip_tags($this->input->post('adresse', true)));
+        $email  = trim(strip_tags($this->input->post('email', true)));
+        $numero = trim(strip_tags($this->input->post('numero', true)));
+        $poste  = trim(strip_tags($this->input->post('poste', true)));
+        $idprojet = trim($this->input->post('idprojet', true) ?? '');
+        $roles  = trim($this->input->post('role', true) ?? '');
 
-    $idadmin = $_SESSION['idadmin'] ?? 0;
+        $idadmin = $_SESSION['idadmin'] ?? 0;
 
-    // ──────────────────────────────────────────────
-    // Validation progressive – on arrête dès la première erreur
-    // ──────────────────────────────────────────────
-    $errors = [];
+        // ──────────────────────────────────────────────
+        // Validation progressive – on arrête dès la première erreur
+        // ──────────────────────────────────────────────
+        $errors = [];
 
-    if (empty($nom))     $errors[] = "Le nom est obligatoire.";
-    if (empty($prenom))  $errors[] = "Le prénom est obligatoire.";
-    if (empty($email))   $errors[] = "L'email est obligatoire.";
-    if (empty($numero))  $errors[] = "Le numéro est obligatoire.";
-    if (empty($poste))   $errors[] = "Veuillez sélectionner un poste.";
-    if (empty($idprojet)) $errors[] = "Veuillez sélectionner un projet.";
+        if (empty($nom))     $errors[] = "Le nom est obligatoire.";
+        if (empty($prenom))  $errors[] = "Le prénom est obligatoire.";
+        if (empty($email))   $errors[] = "L'email est obligatoire.";
+        if (empty($numero))  $errors[] = "Le numéro est obligatoire.";
+        if (empty($poste))   $errors[] = "Veuillez sélectionner un poste.";
+        if (empty($idprojet)) $errors[] = "Veuillez sélectionner un projet.";
 
-    // Vérification doublons
-    $mailExists = $this->user->verifMail($email);
-    if (count($mailExists) > 0) {
-        $errors[] = "Cet email est déjà utilisé.";
-    }
+        // Vérification doublons
+        $mailExists = $this->user->verifMail($email);
+        if (count($mailExists) > 0) {
+            $errors[] = "Cet email est déjà utilisé.";
+        }
 
-    $numExists = $this->user->verifNum($numero);
-    if (count($numExists) > 0) {
-        $errors[] = "Ce numéro existe déjà.";
-    }
+        $numExists = $this->user->verifNum($numero);
+        if (count($numExists) > 0) {
+            $errors[] = "Ce numéro existe déjà.";
+        }
 
-    // ──────────────────────────────────────────────
-    // S'il y a des erreurs → on redirige avec message
-    // ──────────────────────────────────────────────
-    if (!empty($errors)) {
-        $this->session->set_flashdata('form_errors', $errors);
-        $this->session->set_flashdata('old_input', $this->input->post()); // pour pré-remplir le formulaire
+        // ──────────────────────────────────────────────
+        // S'il y a des erreurs → on redirige avec message
+        // ──────────────────────────────────────────────
+        if (!empty($errors)) {
+            $this->session->set_flashdata('form_errors', $errors);
+            $this->session->set_flashdata('old_input', $this->input->post()); // pour pré-remplir le formulaire
+            redirect('user');
+            exit;
+        }
+
+        // ──────────────────────────────────────────────
+        // Tout est OK → insertion
+        // ──────────────────────────────────────────────
+        $data = [
+            'nomUser'     => $nom,
+            'prenomUser'  => $prenom,
+            'contact'     => $numero,
+            'adress'      => $adresse,
+            'idposte'     => $poste,
+            'mail'        => $email,
+            'idprojet'    => $idprojet,
+            'idPointVente' => 0,                 // ignoré
+            'pass'        => hash_it('123456'),
+            'idadmin'     => $idadmin,
+            'roles'       => $roles
+        ];
+
+        $this->user->insertUser($data);
+
+        $this->session->set_flashdata('ajout', 'Utilisateur ajouté avec succès.');
         redirect('user');
-        exit;
     }
-
-    // ──────────────────────────────────────────────
-    // Tout est OK → insertion
-    // ──────────────────────────────────────────────
-    $data = [
-        'nomUser'     => $nom,
-        'prenomUser'  => $prenom,
-        'contact'     => $numero,
-        'adress'      => $adresse,
-        'idposte'     => $poste,
-        'mail'        => $email,
-        'idprojet'    => $idprojet,
-        'idPointVente'=> 0,                 // ignoré
-        'pass'        => hash_it('123456'),
-        'idadmin'     => $idadmin,
-        'roles'       => $roles
-    ];
-
-    $this->user->insertUser($data);
-
-    $this->session->set_flashdata('ajout', 'Utilisateur ajouté avec succès.');
-    redirect('user');
-}
     public function deleteUser()
     {
 
-        $this->jail() ; 
+        $this->jail();
         $id = $this->input->post('id');
         $data = $this->user->deleteUser($id);
 
@@ -251,22 +251,22 @@ public function registerUser()
     }
 
     public function DonnerUser()
-{
-    $id = $this->input->post('id');
+    {
+        $id = $this->input->post('id');
 
-    $userData = $this->user->getAllUserById($id);
+        $userData = $this->user->getAllUserById($id);
 
-    // Charger les projets
-    $this->load->model('ProjetModel', 'projet');
-    $projets = $this->projet->getAllForSelect();
+        // Charger les projets
+        $this->load->model('ProjetModel', 'projet');
+        $projets = $this->projet->getAllForSelect();
 
-    echo json_encode([
-        'success' => !empty($userData),
-        'data'    => $userData ? $userData[0] : null,   // ← objet direct, pas tableau
-        'projets' => $projets,                          // ← liste des projets
-        'postes'  => $this->postes
-    ]);
-}
+        echo json_encode([
+            'success' => !empty($userData),
+            'data'    => $userData ? $userData[0] : null,   // ← objet direct, pas tableau
+            'projets' => $projets,                          // ← liste des projets
+            'postes'  => $this->postes
+        ]);
+    }
 
     // public function DonnerUser()
     // {
@@ -307,39 +307,39 @@ public function registerUser()
     //     $this->session->set_flashdata('edit', 'Ajout réussie');
     //     redirect('user') ;
     // }
-public function editUser()
-{
-    $id     = strip_tags(trim($this->input->post('id_modif')));
-    $nom    = strip_tags(trim($this->input->post('nom_modif')));
-    $prenom = strip_tags(trim($this->input->post('prenom_modif')));
-    $adresse = strip_tags(trim($this->input->post('adresse_modif')));
-    $numero = strip_tags(trim($this->input->post('numero_modif')));
-    $poste  = strip_tags(trim($this->input->post('poste')));
-    $email  = strip_tags(trim($this->input->post('email_modif')));
-    $idprojet   = trim($this->input->post('idprojet_modif', true) ?? '');   // ← important : le nom du champ dans le modal
-    $idPv   = strip_tags(trim($this->input->post('idPv_modif')));
+    public function editUser()
+    {
+        $id     = strip_tags(trim($this->input->post('id_modif')));
+        $nom    = strip_tags(trim($this->input->post('nom_modif')));
+        $prenom = strip_tags(trim($this->input->post('prenom_modif')));
+        $adresse = strip_tags(trim($this->input->post('adresse_modif')));
+        $numero = strip_tags(trim($this->input->post('numero_modif')));
+        $poste  = strip_tags(trim($this->input->post('poste')));
+        $email  = strip_tags(trim($this->input->post('email_modif')));
+        $idprojet   = trim($this->input->post('idprojet_modif', true) ?? '');   // ← important : le nom du champ dans le modal
+        $idPv   = strip_tags(trim($this->input->post('idPv_modif')));
 
-    // Récupération des rôles
-    $roles = trim($this->input->post('role_modif') ?? '');
+        // Récupération des rôles
+        $roles = trim($this->input->post('role_modif') ?? '');
 
-    $data = [
-        'nomUser'      => $nom,
-        'prenomUser'   => $prenom,
-        'contact'      => trim($numero),
-        'adress'       => $adresse,
-        'idposte'      => $poste,
-        'mail'         => $email,
-        'idPointVente' => $idPv,
-        'idprojet'    => $idprojet ?: null,
-        
-        'roles'        => $roles                     // ← maintenant défini
-    ];
+        $data = [
+            'nomUser'      => $nom,
+            'prenomUser'   => $prenom,
+            'contact'      => trim($numero),
+            'adress'       => $adresse,
+            'idposte'      => $poste,
+            'mail'         => $email,
+            'idPointVente' => $idPv,
+            'idprojet'    => $idprojet ?: null,
 
-    $this->user->updateUser($id, $data);
-    $this->session->set_flashdata('edit', 'Utilisateur modifié avec succès.');
+            'roles'        => $roles                     // ← maintenant défini
+        ];
 
-    redirect('user');
-}
+        $this->user->updateUser($id, $data);
+        $this->session->set_flashdata('edit', 'Utilisateur modifié avec succès.');
+
+        redirect('user');
+    }
 
     public function verifUser()
     {
@@ -372,7 +372,7 @@ public function editUser()
     public function rechercheUser()
     {
         if ($_SESSION['user_type'] == 'admin') {
-            $keyword = strip_tags(trim($_GET['recherche'])) ;
+            $keyword = strip_tags(trim($_GET['recherche']));
             $_POST['post'] = $keyword;
             // * pagination * // 
             $config = array();
@@ -387,10 +387,10 @@ public function editUser()
             $config['use_page_numbers'] = TRUE;
             $this->pagination->initialize($config);
 
-            $page = ( isset($_GET['page'])) ? $_GET['page'] : 0;
+            $page = (isset($_GET['page'])) ? $_GET['page'] : 0;
 
             $datapag["links"] = $this->pagination->create_links();
-            
+
             if ((int)$page == 0) {
                 $start = (int)$page * (int)$config["per_page"];
             } else {
@@ -408,17 +408,16 @@ public function editUser()
             $this->load->view('templates/header', $data);
             $this->load->view('templates/sidebar', ['user' => true]);
             $this->load->view('templates/tete');
-            $this->load->view('user',[
-                'data' => $datapag ,
-                'post' => $_POST['post'] , 
-                'pv' => $this->dispatch->getAllVente() , 
+            $this->load->view('user', [
+                'data' => $datapag,
+                'post' => $_POST['post'],
+                'pv' => $this->dispatch->getAllVente(),
                 'postes' => $this->postes
             ]);
             $this->load->view('templates/footer', $js);
         } else {
             redirect('dispatch');
         }
-
     }
 
     public function mdpUser()
@@ -429,42 +428,49 @@ public function editUser()
             'pass' => hash_it('123456'),
         );
 
-        $this->user->mdpUser($id , $data);
+        $this->user->mdpUser($id, $data);
 
         echo json_encode([
             'success' => true
         ]);
-        
+
         $this->session->set_flashdata('effectuer', 'Ajout réussie');
     }
 
 
-    public function search_json( ){
-        $recherche = '' ; 
-        if ( isset( $_POST['recherche'] ) && $_POST['recherche'] != ''){
-            $recherche = trim( strip_tags( $_POST['recherche'])) ; 
-        }
-        $type = '' ; 
-        if ( isset( $_POST['type'] ) && $_POST['type'] != ''){
-            $type = trim( strip_tags( $_POST['type'])) ; 
+    public function search_json()
+    {
+        $recherche = $this->input->post('recherche');
+
+        $this->db->select('*');
+        $this->db->from('user');
+
+        if (!empty($recherche)) {
+            $this->db->group_start();
+            $this->db->like('nomUser', $recherche, 'both');
+            $this->db->or_like('prenomUser', $recherche, 'both');
+            $this->db->or_like('contact', $recherche, 'both');
+            $this->db->or_like('mail', $recherche, 'both');
+            $this->db->group_end();
         }
 
+        $datas = $this->db->get()->result();
 
-        $users = $this->user->searchUser( $recherche ,'' , '' ,  $type  ) ; 
-        if ( count( $users )){
+        if (count($datas)) {
             echo json_encode([
-                'success' => true , 
-                'datas' => $users 
-            ])  ; 
-        }else {
+                'success' => true,
+                'datas' => $datas
+            ]);
+        } else {
             echo json_encode([
-                'success' => false , 
-                'datas' => $users 
-            ])  ; 
+                'success' => false,
+                'datas' => []
+            ]);
         }
-
     }
-    public function admin_inscription() {
-    $this->load->view('admin_inscription');
-}
+
+    public function admin_inscription()
+    {
+        $this->load->view('admin_inscription');
+    }
 }

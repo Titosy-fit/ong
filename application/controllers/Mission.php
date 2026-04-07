@@ -49,39 +49,39 @@ class Mission extends CI_Controller
     //     ]);
     //     $this->load->view('templates/footer', $js);
     // }
-public function index()
-{
-    $data['title'] = 'Mission';
-    $data['css']   = 'mission.css';
-    $js['js']      = 'mission.js';
+    public function index()
+    {
+        $data['title'] = 'Mission';
+        $data['css']   = 'mission.css';
+        $js['js']      = 'mission.js';
 
-    $this->jail();
+        $this->jail();
 
-    $page = $this->input->get('page') ? (int)$this->input->get('page') : 1;
-    if ($page < 1) $page = 1;
+        $page = $this->input->get('page') ? (int)$this->input->get('page') : 1;
+        if ($page < 1) $page = 1;
 
-    // Compteur performant (pas besoin de charger toutes les lignes)
-    $total = $this->mission->count_missions();
+        // Compteur performant (pas besoin de charger toutes les lignes)
+        $total = $this->mission->count_missions();
 
-    // Données paginées
-    $datapag['mission'] = $this->mission->getmission($page);
+        // Données paginées
+        $datapag['mission'] = $this->mission->getmission($page);
 
-    $datapag['lien'] = $this->_pagination_links(
-        base_url('mission'),
-        $total,
-        PAGINATION ?? 10
-    );
+        $datapag['lien'] = $this->_pagination_links(
+            base_url('mission'),
+            $total,
+            PAGINATION ?? 10
+        );
 
-    $this->load->view('templates/header', $data);
-    $this->load->view('templates/sidebar', ['mission' => true]);
-    $this->load->view('templates/tete');
-    $this->load->view('mission', [
-        'data'     => $datapag,
-        'projets'  => $this->projets,
-        'current'  => $page
-    ]);
-    $this->load->view('templates/footer', $js);
-}
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', ['mission' => true]);
+        $this->load->view('templates/tete');
+        $this->load->view('mission', [
+            'data'     => $datapag,
+            'projets'  => $this->projets,
+            'current'  => $page
+        ]);
+        $this->load->view('templates/footer', $js);
+    }
 
 
     /**
@@ -138,9 +138,9 @@ public function index()
      */
     public function register()
     {
-         $type  = '';
+        $type  = '';
         if (isset($_POST['typeMission']) && $_POST['typeMission'] != '') {
-            $type= trim(strip_tags($_POST['typeMission']));
+            $type = trim(strip_tags($_POST['typeMission']));
         }
         $idbudget  = '';
         if (isset($_POST['idbudget']) && $_POST['idbudget'] != '') {
@@ -209,13 +209,13 @@ public function index()
             'idagent' => $idagent,
             'idadmin' => $_SESSION['idadmin'],
             'idUser' => $idUser,
-            'idprojet'=>  $projet,
-            'typeMission'=>$type
+            'idprojet' =>  $projet,
+            'typeMission' => $type
         ];
 
-         $avances = [] ; 
-        if(is_array($_POST["avances"])){
-            $avances = $_POST["avances"] ;
+        $avances = [];
+        if (is_array($_POST["avances"])) {
+            $avances = $_POST["avances"];
         }
         $idmission = $this->mission->register($data);
         if ($avances) {
@@ -225,15 +225,15 @@ public function index()
                 $data = [
                     'idbudget ' => $idbudget,
                     'montant_avance'  => $montant,
-                    'idmission '=>$idmission
+                    'idmission ' => $idmission
                 ];
-                
-                $this->mission->insertAvanceMission($data) ;
+
+                $this->mission->insertAvanceMission($data);
             }
         }
-        
+
         $this->session->set_userdata('added_projet',  true);
-       
+
         redirect('mission');
     }
 
@@ -260,42 +260,38 @@ public function index()
     }
     public function getData_json2()
     {
-        $om  ='';
-       
+        $om  = '';
+
         if (isset($_POST['om']) && $_POST['om'] != '') {
             $om = trim(strip_tags($_POST['om']));
         }
 
         $data = $this->mission->obtenirMission($om);
-        
+
         if (count($data)) {
-            if($this->liquidation->verifyLiquidation($data[0]->idmission)!=0) {
+            if ($this->liquidation->verifyLiquidation($data[0]->idmission) != 0) {
 
-                
-                $liquid = $this->liquidation->getInfoLiquidation($data[0]->idmission) ; 
 
-                $montant =$this->liquidation->getTotalMontantReturn($liquid->idliquidation) ;
+                $liquid = $this->liquidation->getInfoLiquidation($data[0]->idmission);
+
+                $montant = $this->liquidation->getTotalMontantReturn($liquid->idliquidation);
                 $totalReturn = $montant + $this->liquidation->getMontantReturnByLiquidation2($liquid->idliquidation);
 
-               echo json_encode([
+                echo json_encode([
                     'success' => true,
                     'data' => $data,
-                    'totalDepense'=>$liquid->montant_depense,
-                    'totalRetourne'=>$totalReturn,
-                    'idMission'=>$data[0]->idmission,
-                    'idLiquidation'=>$liquid->idliquidation
-                    
+                    'totalDepense' => $liquid->montant_depense,
+                    'totalRetourne' => $totalReturn,
+                    'idMission' => $data[0]->idmission,
+                    'idLiquidation' => $liquid->idliquidation
+
                 ]);
-            }
-            else {
+            } else {
                 echo json_encode([
                     'success' => false,
                     'type' => 'liquide'
                 ]);
-                 
             }
-           
-            
         } else {
             echo json_encode([
                 'success' => false,
@@ -304,74 +300,69 @@ public function index()
         }
     }
 
-//     public function getData_json2()
-// {
-//     $om = trim(strip_tags($_POST['om'] ?? ''));
+    //     public function getData_json2()
+    // {
+    //     $om = trim(strip_tags($_POST['om'] ?? ''));
 
-//     $data = $this->mission->obtenirMission($om);
+    //     $data = $this->mission->obtenirMission($om);
 
-//     if (empty($data)) {
-//         echo json_encode(['success' => false, 'type' => 'data']);
-//         return;
-//     }
+    //     if (empty($data)) {
+    //         echo json_encode(['success' => false, 'type' => 'data']);
+    //         return;
+    //     }
 
-//     $idmission = $data[0]->idmission;
+    //     $idmission = $data[0]->idmission;
 
-//     if ($this->liquidation->verifyLiquidation($idmission) == 0) {
-//         echo json_encode(['success' => false, 'type' => 'liquide']);
-//         return;
-//     }
+    //     if ($this->liquidation->verifyLiquidation($idmission) == 0) {
+    //         echo json_encode(['success' => false, 'type' => 'liquide']);
+    //         return;
+    //     }
 
-//     $liquid = $this->liquidation->getInfoLiquidation($idmission);
-//     $idliquidation = $liquid->idliquidation;
+    //     $liquid = $this->liquidation->getInfoLiquidation($idmission);
+    //     $idliquidation = $liquid->idliquidation;
 
-//     // ──── IMPORTANT ────
-//     $somme_rembourse_depuis_relique = (float) $this->liquidation->getTotalMontantReturn($idliquidation);
+    //     // ──── IMPORTANT ────
+    //     $somme_rembourse_depuis_relique = (float) $this->liquidation->getTotalMontantReturn($idliquidation);
 
-//     $reliquat_restant = max(0, $liquid->montant_reliquat - $somme_rembourse_depuis_relique);
+    //     $reliquat_restant = max(0, $liquid->montant_reliquat - $somme_rembourse_depuis_relique);
 
-//     echo json_encode([
-//         'success'                     => true,
-//         'data'                        => $data,
-//         'totalDepense'                => $liquid->montant_depense,
-//         'totalRetourneViaRelique'     => $somme_rembourse_depuis_relique,     // ← renommé pour clarté
-//         'montantReturnALaLiquidation' => (float) $liquid->montant_return,     // ← valeur initiale
-//         'reliquatInitial'             => (float) $liquid->montant_reliquat,
-//         'reliquatRestant'             => $reliquat_restant,
-//         'idMission'                   => $idmission,
-//         'idLiquidation'               => $idliquidation
-//     ]);
-// }
+    //     echo json_encode([
+    //         'success'                     => true,
+    //         'data'                        => $data,
+    //         'totalDepense'                => $liquid->montant_depense,
+    //         'totalRetourneViaRelique'     => $somme_rembourse_depuis_relique,     // ← renommé pour clarté
+    //         'montantReturnALaLiquidation' => (float) $liquid->montant_return,     // ← valeur initiale
+    //         'reliquatInitial'             => (float) $liquid->montant_reliquat,
+    //         'reliquatRestant'             => $reliquat_restant,
+    //         'idMission'                   => $idmission,
+    //         'idLiquidation'               => $idliquidation
+    //     ]);
+    // }
     public function getData_json()
     {
-        $om  ='';
-       
+        $om  = '';
+
         if (isset($_POST['om']) && $_POST['om'] != '') {
             $om = trim(strip_tags($_POST['om']));
         }
 
         $data = $this->mission->obtenirMission($om);
-        
+
         if (count($data)) {
-            if($this->liquidation->verifyLiquidation($data[0]->idmission)!=0) {
+            if ($this->liquidation->verifyLiquidation($data[0]->idmission) != 0) {
 
                 echo json_encode([
                     'success' => false,
                     'type' => 'liquide'
                 ]);
-                
-               
-            }
-            else {
-                
-                 echo json_encode([
+            } else {
+
+                echo json_encode([
                     'success' => true,
                     'data' => $data
-                    
+
                 ]);
             }
-           
-            
         } else {
             echo json_encode([
                 'success' => false,
@@ -440,13 +431,15 @@ public function index()
      */
     public function delete()
     {
-        $idmission  = '';
-        if (isset($_POST['idmission']) && $_POST['idmission'] != '') {
-            $idmission = trim(strip_tags($_POST['idmission']));
-        }
+        $idmission = $this->input->post('idmission');
 
-        $this->mission->delete($idmission);
-        $this->session->set_userdata('delete_projet',  true);
+        if ($idmission) {
+            $this->mission->delete($idmission);
+            $this->session->set_userdata('delete_projet', true);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false]);
+        }
     }
 
     /**
@@ -507,7 +500,7 @@ public function index()
         $this->load->view('mission', [
             'data' => $datapag,
             'nPages' => $nPages,
-            'projets' => $this->projets , 
+            'projets' => $this->projets,
             'current' => $page,
         ]);
         $this->load->view('templates/footer', $js);
@@ -534,13 +527,13 @@ public function index()
                   </tr>
                 </thead>
               <tbody>';
-        
+
         foreach ($datas as $key => $data) {
             $affichage .= "<tr>";
-             $affichage .= "<td>" . $data->ligne_budget  . "</td>";
+            $affichage .= "<td>" . $data->ligne_budget  . "</td>";
             $affichage .= "<td>" . $data->designation_budget  . "</td>";
             $affichage .= "<td>" . number_three($data->budget)  . "</td>";
-             $affichage .= "<td>" . number_three($data->avTemp)  . "</td>";
+            $affichage .= "<td>" . number_three($data->avTemp)  . "</td>";
             $affichage .= "</tr>";
         }
 
@@ -551,25 +544,26 @@ public function index()
         echo $affichage;
     }
 
-    public function projets( $id = '' ){
-        if ( $id != ''){
-            $temps = [] ; 
-            $projets_  = [] ; 
-            if ( count( $this->projets )){
-                foreach ($this->projets  as $key => $projet ) {
-                    if ( $projet->idprojet == $id ){
-                        $projets_ [] = $projet ; 
+    public function projets($id = '')
+    {
+        if ($id != '') {
+            $temps = [];
+            $projets_  = [];
+            if (count($this->projets)) {
+                foreach ($this->projets  as $key => $projet) {
+                    if ($projet->idprojet == $id) {
+                        $projets_[] = $projet;
                     }
                 }
-                foreach ($this->projets  as $key => $projet ) {
-                    if ( $projet->idprojet != $id ){
-                        $projets_ [] = $projet ; 
+                foreach ($this->projets  as $key => $projet) {
+                    if ($projet->idprojet != $id) {
+                        $projets_[] = $projet;
                     }
                 }
             }
-            return $projets_ ; 
+            return $projets_;
         }
-        return $this->projets ; 
+        return $this->projets;
     }
 
 
@@ -591,7 +585,7 @@ public function index()
         $_POST['idprojet'] = $idprojet;
 
         $datapag['mission'] = $this->mission->searchProjet($idprojet, $page);
-        $datapag['lien'] = $this->pagination_search( 'Mission/searchProjet' , count($this->mission->searchProjet($idprojet)) );
+        $datapag['lien'] = $this->pagination_search('Mission/searchProjet', count($this->mission->searchProjet($idprojet)));
 
 
         $data['title'] = 'Mission';
@@ -603,25 +597,26 @@ public function index()
         $this->load->view('templates/tete');
         $this->load->view('mission', [
             'data' => $datapag,
-            'projets' => $this->projets( $idprojet ) , 
+            'projets' => $this->projets($idprojet),
             'current' => $page,
         ]);
         $this->load->view('templates/footer', $js);
     }
 
-    public function filtreliquidation(){
+    public function filtreliquidation()
+    {
         $page = isset($_GET['page']) ? $_GET['page'] : 0;
         $idprojet  = '';
         if (isset($_GET['projet']) && $_GET['projet'] != '') {
             $idprojet = trim(strip_tags($_GET['projet']));
         }
 
-        $_POST['filtre'] = true ; 
+        $_POST['filtre'] = true;
 
         $_POST['idprojet'] = $idprojet;
 
         $datapag['mission'] = $this->mission->filtreliquidation($idprojet, $page);
-        $datapag['lien'] = $this->pagination_search('Mission/filtre-liquidation' , count($this->mission->filtreliquidation($idprojet)) );
+        $datapag['lien'] = $this->pagination_search('Mission/filtre-liquidation', count($this->mission->filtreliquidation($idprojet)));
 
         $data['title'] = 'Mission';
         $data['css'] = 'mission.css';
@@ -632,26 +627,26 @@ public function index()
         $this->load->view('templates/tete');
         $this->load->view('mission', [
             'data' => $datapag,
-            'projets' => $this->projets( $idprojet ) , 
+            'projets' => $this->projets($idprojet),
             'current' => $page,
         ]);
         $this->load->view('templates/footer', $js);
-
     }
-    public function filtreReliquat(){
+    public function filtreReliquat()
+    {
         $page = isset($_GET['page']) ? $_GET['page'] : 0;
         $idprojet  = '';
         if (isset($_GET['projet']) && $_GET['projet'] != '') {
             $idprojet = trim(strip_tags($_GET['projet']));
         }
 
-        $_POST['filtre'] = true ; 
+        $_POST['filtre'] = true;
 
 
         $_POST['idprojet'] = $idprojet;
 
         $datapag['mission'] = $this->mission->filtreReliquat($idprojet, $page);
-        $datapag['lien'] = $this->pagination_search('Mission/filtre-reliquat' , count($this->mission->filtreReliquat($idprojet)) );
+        $datapag['lien'] = $this->pagination_search('Mission/filtre-reliquat', count($this->mission->filtreReliquat($idprojet)));
 
         $data['title'] = 'Mission';
         $data['css'] = 'mission.css';
@@ -662,57 +657,56 @@ public function index()
         $this->load->view('templates/tete');
         $this->load->view('mission', [
             'data' => $datapag,
-            'projets' => $this->projets( $idprojet ) , 
+            'projets' => $this->projets($idprojet),
             'current' => $page,
         ]);
         $this->load->view('templates/footer', $js);
-
     }
     private function _pagination_links($base_url, $total_rows, $per_page = PAGINATION)
-{
-    $this->load->library('pagination');
+    {
+        $this->load->library('pagination');
 
-    $config = [];
+        $config = [];
 
-    $config['base_url']             = $base_url;
-    $config['total_rows']           = $total_rows;
-    $config['per_page']             = $per_page;
-    $config['use_page_numbers']     = TRUE;
-    $config['page_query_string']    = TRUE;          // → ?page=2
-    $config['query_string_segment'] = 'page';
+        $config['base_url']             = $base_url;
+        $config['total_rows']           = $total_rows;
+        $config['per_page']             = $per_page;
+        $config['use_page_numbers']     = TRUE;
+        $config['page_query_string']    = TRUE;          // → ?page=2
+        $config['query_string_segment'] = 'page';
 
-    // Style Bootstrap (comme dans Budget / Reliquat)
-    $config['full_tag_open']    = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
-    $config['full_tag_close']   = '</ul></nav>';
+        // Style Bootstrap (comme dans Budget / Reliquat)
+        $config['full_tag_open']    = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
+        $config['full_tag_close']   = '</ul></nav>';
 
-    $config['num_tag_open']     = '<li class="page-item">';
-    $config['num_tag_close']    = '</li>';
-    $config['cur_tag_open']     = '<li class="page-item active"><span class="page-link">';
-    $config['cur_tag_close']    = '</span></li>';
+        $config['num_tag_open']     = '<li class="page-item">';
+        $config['num_tag_close']    = '</li>';
+        $config['cur_tag_open']     = '<li class="page-item active"><span class="page-link">';
+        $config['cur_tag_close']    = '</span></li>';
 
-    $config['attributes']       = ['class' => 'page-link'];
+        $config['attributes']       = ['class' => 'page-link'];
 
-    $config['prev_tag_open']    = '<li class="page-item">';
-    $config['prev_tag_close']   = '</li>';
-    $config['next_tag_open']    = '<li class="page-item">';
-    $config['next_tag_close']   = '</li>';
+        $config['prev_tag_open']    = '<li class="page-item">';
+        $config['prev_tag_close']   = '</li>';
+        $config['next_tag_open']    = '<li class="page-item">';
+        $config['next_tag_close']   = '</li>';
 
-    $config['first_tag_open']   = '<li class="page-item">';
-    $config['first_tag_close']  = '</li>';
-    $config['last_tag_open']    = '<li class="page-item">';
-    $config['last_tag_close']   = '</li>';
+        $config['first_tag_open']   = '<li class="page-item">';
+        $config['first_tag_close']  = '</li>';
+        $config['last_tag_open']    = '<li class="page-item">';
+        $config['last_tag_close']   = '</li>';
 
-    $config['prev_link']        = 'Previous';
-    $config['next_link']        = 'Next';
+        $config['prev_link']        = 'Previous';
+        $config['next_link']        = 'Next';
 
-    // Si tu préfères des flèches : décommente ça
-    // $config['prev_link']     = '&laquo;';
-    // $config['next_link']     = '&raquo;';
+        // Si tu préfères des flèches : décommente ça
+        // $config['prev_link']     = '&laquo;';
+        // $config['next_link']     = '&raquo;';
 
-    $config['num_links']        = 2;  // → ... 3 4 5 6 ...
+        $config['num_links']        = 2;  // → ... 3 4 5 6 ...
 
-    $this->pagination->initialize($config);
+        $this->pagination->initialize($config);
 
-    return $this->pagination->create_links();
-}
+        return $this->pagination->create_links();
+    }
 }
