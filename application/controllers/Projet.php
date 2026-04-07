@@ -39,15 +39,54 @@ class Projet extends CI_Controller
         ]);
         $this->load->view('templates/footer', $js);
     }
-    private function convertDate($dateStr) {
-        $date = DateTime::createFromFormat('d/m/Y', trim($dateStr));
-        if ($date) {
-            return $date->format('Y-m-d H:i:s');
-        } else {
-            return null; // ou '1970-01-01 00:00:00' si tu veux un défaut
-        }
-    }
+    // private function convertDate($dateStr) {
+    //     $date = DateTime::createFromFormat('d/m/Y', trim($dateStr));
+    //     if ($date) {
+    //         return $date->format('Y-m-d H:i:s');
+    //     } else {
+    //         return null; // ou '1970-01-01 00:00:00' si tu veux un défaut
+    //     }
+    // }
 
+        /**
+     * Conversion de date robuste (gère d/m/Y ET Y-m-d)
+     */
+    private function convertDate($dateStr)
+    {
+        $dateStr = trim($dateStr);
+
+        // Dates vides ou invalides → on les met à NULL (la BDD mettra 0000-00-00 si besoin)
+        if (empty($dateStr) || $dateStr === '0000-00-00') {
+            return null;
+        }
+
+        // 1. Format français classique : 25/12/2025
+        $date = DateTime::createFromFormat('d/m/Y', $dateStr);
+        if ($date !== false) {
+            return $date->format('Y-m-d H:i:s');
+        }
+
+        // 2. Format ISO (le plus fréquent dans les CSV) : 2025-12-25
+        $date = DateTime::createFromFormat('Y-m-d', $dateStr);
+        if ($date !== false) {
+            return $date->format('Y-m-d H:i:s');
+        }
+
+        // 3. Format avec tirets jour-mois-année : 25-12-2025
+        $date = DateTime::createFromFormat('d-m-Y', $dateStr);
+        if ($date !== false) {
+            return $date->format('Y-m-d H:i:s');
+        }
+
+        // 4. Dernier recours : strtotime (très permissif)
+        $timestamp = strtotime($dateStr);
+        if ($timestamp !== false) {
+            return date('Y-m-d H:i:s', $timestamp);
+        }
+
+        // Si vraiment rien ne marche → NULL
+        return null;
+    }
    public function import_csv() {
     $this->load->helper(array('form', 'url'));
 
