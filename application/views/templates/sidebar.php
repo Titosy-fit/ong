@@ -68,7 +68,7 @@
             <?php if ($_SESSION['user_type'] == 'admin' || $_SESSION['type_of_user'] == 'Raf') : ?>
                 <a href="<?= base_url('demande-mat') ?>" class="sidebar-link <?= (basename($_SERVER['PHP_SELF']) == 'demande-mat' || basename($_SERVER['PHP_SELF']) == 'liste-demande') ? 'active' : '' ?>">
                     <span class="icon"><i class="fas fa-share-alt"></i></span>
-                    <span class="ms-1">Demandes de matériels </span>
+                    <span class="ms-1">Fiches de distributions</span>
                 </a>
                 <a href="<?= base_url('rendre-mat') ?>" class="sidebar-link <?= (basename($_SERVER['PHP_SELF']) == 'rendre-mat') ? 'active' : '' ?>">
                     <span class="icon"><i class="fas fa-undo"></i></span>

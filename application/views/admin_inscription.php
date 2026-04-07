@@ -37,34 +37,34 @@
                         <label>Prénom</label>
                         <input type="text" name="prenom" class="form-control" required>
                     </div>
-                    <div class="mb-2">
+                    <!-- <div class="mb-2">
                         <label>Entreprise</label>
                         <input type="text" name="entreprise" class="form-control">
-                    </div>
+                    </div> -->
                     <div class="mb-2">
                         <label>Adresse</label>
                         <input type="text" name="adresse" class="form-control">
                     </div>
-                    <div class="mb-2">
+                    <!-- <div class="mb-2">
                         <label>Téléphone entreprise</label>
                         <input type="tel" name="tel" class="form-control">
-                    </div>
+                    </div> -->
                     <div class="mb-2">
                         <label>Téléphone administrateur</label>
                         <input type="tel" name="teladmin" class="form-control">
                     </div>
-                    <div class="mb-2">
+                    <!-- <div class="mb-2">
                         <label>NIF</label>
                         <input type="text" name="nif" class="form-control">
                     </div>
                     <div class="mb-2">
                         <label>STAT</label>
                         <input type="text" name="stat" class="form-control">
-                    </div>
-                    <div class="mb-2">
+                    </div> -->
+                    <!-- <div class="mb-2">
                         <label>Logo</label>
                         <input type="file" name="logo" class="form-control">
-                    </div>
+                    </div> -->
                     <button type="submit" class="btn btn-info">
                         <i class="fas fa-check"></i> Valider
                     </button>

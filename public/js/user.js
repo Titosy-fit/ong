@@ -74,7 +74,7 @@
 // 					poste_modif +=`<option value="${element.idposte}">${element.designation_poste}</option>` ;
 // 				}
 // 			}
-			
+
 // 			for (let i = 0; i < postes.length; i++) {
 // 				const element = postes[i];
 // 				if  ( data.idposte != element.idposte ){
@@ -243,7 +243,7 @@ function reinitialize(elem) {
 //             $("#numero_modif").val(data.contact);
 //             $("#adresse_modif").val(data.adress);
 //             $("#email_modif").val(data.mail);
-            
+
 //             // Mettre à jour les cases à cocher des rôles pour la modification
 //             if (data.roles) {
 //                 let rolesArray = [];
@@ -252,7 +252,7 @@ function reinitialize(elem) {
 //                 } else if (typeof data.roles === 'string') {
 //                     rolesArray = data.roles.split(',').map(role => role.trim());
 //                 }
-                
+
 //                 // Mettre à jour les cases à cocher
 //                 $('.role-checkbox-modif').each(function() {
 //                     const roleValue = $(this).val();
@@ -262,7 +262,7 @@ function reinitialize(elem) {
 //                         $(this).prop('checked', false);
 //                     }
 //                 });
-                
+
 //                 // Mettre à jour le champ caché
 //                 updateHiddenRoleModif();
 //             } else {
@@ -279,7 +279,7 @@ function reinitialize(elem) {
 //                     poste_modif +=`<option value="${element.idposte}">${element.designation_poste}</option>` ;
 //                 }
 //             }
-            
+
 //             for (let i = 0; i < postes.length; i++) {
 //                 const element = postes[i];
 //                 if  ( data.idposte != element.idposte ){
@@ -332,81 +332,81 @@ function DonnerUser(elem) {
         data: { id: id },
         dataType: "json",
     })
-    .done(function (response) {
-        if (response.success) {
-            const data    = response.data;       // ← maintenant c'est l'objet direct (pas data[0])
-            const projets = response.projets;    // ← liste des projets (remplace pv)
-            const postes  = response.postes;
+        .done(function (response) {
+            if (response.success) {
+                const data = response.data;       // ← maintenant c'est l'objet direct (pas data[0])
+                const projets = response.projets;    // ← liste des projets (remplace pv)
+                const postes = response.postes;
 
-            // Champs texte
-            $("#id-User").val(data.idUser || '');
-            $("#nom_modif").val(data.nomUser || '');
-            $("#prenom_modif").val(data.prenomUser || '');
-            $("#numero_modif").val(data.contact || '');
-            $("#adresse_modif").val(data.adress || '');
-            $("#email_modif").val(data.mail || '');
+                // Champs texte
+                $("#id-User").val(data.idUser || '');
+                $("#nom_modif").val(data.nomUser || '');
+                $("#prenom_modif").val(data.prenomUser || '');
+                $("#numero_modif").val(data.contact || '');
+                $("#adresse_modif").val(data.adress || '');
+                $("#email_modif").val(data.mail || '');
 
-            // Rôles (checkboxes) → inchangé
-            if (data.roles) {
-                let rolesArray = [];
-                if (Array.isArray(data.roles)) {
-                    rolesArray = data.roles;
-                } else if (typeof data.roles === 'string') {
-                    rolesArray = data.roles.split(',').map(role => role.trim());
+                // Rôles (checkboxes) → inchangé
+                if (data.roles) {
+                    let rolesArray = [];
+                    if (Array.isArray(data.roles)) {
+                        rolesArray = data.roles;
+                    } else if (typeof data.roles === 'string') {
+                        rolesArray = data.roles.split(',').map(role => role.trim());
+                    }
+
+                    $('.role-checkbox-modif').each(function () {
+                        const roleValue = $(this).val();
+                        $(this).prop('checked', rolesArray.includes(roleValue));
+                    });
+
+                    updateHiddenRoleModif();
+                } else {
+                    $('.role-checkbox-modif').prop('checked', false);
+                    $("#hidden_role_modif").val("");
                 }
 
-                $('.role-checkbox-modif').each(function() {
-                    const roleValue = $(this).val();
-                    $(this).prop('checked', rolesArray.includes(roleValue));
+                // Poste → simplifié (une seule boucle)
+                let posteHtml = '';
+                postes.forEach(poste => {
+                    const selected = (poste.idposte == data.idposte) ? ' selected' : '';
+                    posteHtml += `<option value="${poste.idposte}"${selected}>${poste.designation_poste}</option>`;
                 });
+                $("#poste_modif").html(posteHtml);
 
-                updateHiddenRoleModif();
+                // Projet → remplace l'ancien code pv
+                let projetHtml = '<option value="">-- Sélectionner un projet --</option>';
+
+                if (projets && projets.length > 0) {
+                    projets.forEach(projet => {
+                        const selected = (projet.idprojet == data.idprojet) ? ' selected' : '';
+                        let label = projet.codeprojet || '—';
+                        if (projet.titreprojet) {
+                            label += ` — ${projet.titreprojet}`;
+                        }
+                        projetHtml += `<option value="${projet.idprojet}"${selected}>${label}</option>`;
+                    });
+                } else {
+                    projetHtml += '<option value="" disabled>Aucun projet disponible</option>';
+                }
+
+                $("#projetModif").html(projetHtml);
             } else {
-                $('.role-checkbox-modif').prop('checked', false);
-                $("#hidden_role_modif").val("");
+                Myalert.erreur("Impossible de charger les informations de l'utilisateur.");
             }
-
-            // Poste → simplifié (une seule boucle)
-            let posteHtml = '';
-            postes.forEach(poste => {
-                const selected = (poste.idposte == data.idposte) ? ' selected' : '';
-                posteHtml += `<option value="${poste.idposte}"${selected}>${poste.designation_poste}</option>`;
-            });
-            $("#poste_modif").html(posteHtml);
-
-            // Projet → remplace l'ancien code pv
-            let projetHtml = '<option value="">-- Sélectionner un projet --</option>';
-
-            if (projets && projets.length > 0) {
-                projets.forEach(projet => {
-                    const selected = (projet.idprojet == data.idprojet) ? ' selected' : '';
-                    let label = projet.codeprojet || '—';
-                    if (projet.titreprojet) {
-                        label += ` — ${projet.titreprojet}`;
-                    }
-                    projetHtml += `<option value="${projet.idprojet}"${selected}>${label}</option>`;
-                });
-            } else {
-                projetHtml += '<option value="" disabled>Aucun projet disponible</option>';
-            }
-
-            $("#projetModif").html(projetHtml);
-        } else {
-            Myalert.erreur("Impossible de charger les informations de l'utilisateur.");
-        }
-    })
-    .fail(function (errorMessage) {
-        console.log("Erreur AJAX DonnerUser :", errorMessage);
-        Myalert.erreur("Erreur de connexion au serveur.");
-    });
+        })
+        .fail(function (errorMessage) {
+            console.log("Erreur AJAX DonnerUser :", errorMessage);
+            Myalert.erreur("Erreur de connexion au serveur.");
+        });
 }
 // Fonction pour mettre à jour le champ caché des rôles (AJOUT)
 function updateHiddenRole() {
     const selectedRoles = [];
-    $('.role-checkbox:checked').each(function() {
+    $('.role-checkbox:checked').each(function () {
         selectedRoles.push($(this).val());
     });
-    
+
     if (selectedRoles.length > 0) {
         $("#hidden_role").val(selectedRoles.join(','));
     } else {
@@ -417,10 +417,10 @@ function updateHiddenRole() {
 // Fonction pour mettre à jour le champ caché des rôles (MODIFICATION)
 function updateHiddenRoleModif() {
     const selectedRoles = [];
-    $('.role-checkbox-modif:checked').each(function() {
+    $('.role-checkbox-modif:checked').each(function () {
         selectedRoles.push($(this).val());
     });
-    
+
     if (selectedRoles.length > 0) {
         $("#hidden_role_modif").val(selectedRoles.join(','));
     } else {
@@ -429,19 +429,19 @@ function updateHiddenRoleModif() {
 }
 
 // Écouter les changements sur les cases à cocher des rôles (AJOUT)
-$(document).on('change', '.role-checkbox', function() {
+$(document).on('change', '.role-checkbox', function () {
     updateHiddenRole();
 });
 
 // Écouter les changements sur les cases à cocher des rôles (MODIFICATION)
-$(document).on('change', '.role-checkbox-modif', function() {
+$(document).on('change', '.role-checkbox-modif', function () {
     updateHiddenRoleModif();
 });
 
 $(document.body).on("click", "#modifier", function () {
     // Mettre à jour les rôles avant de vérifier
     updateHiddenRoleModif();
-    
+
     $.ajax({
         url: base_url("verifUser"),
         type: "post",
@@ -479,6 +479,48 @@ $(document.body).on("click", "#modifier", function () {
 
 let window_width = window.innerWidth;
 
+// Gestion de l'exclusivité de la case Consultation - À placer AVANT le $(document).ready()
+function setupConsultationExclusive() {
+    // Pour le formulaire d'ajout
+    const $consultationAdd = $('#role_consultation');
+    const $otherRolesAdd = $('#role_projet, #role_budget, #role_liquidation, #role_logistique');
+
+    if ($consultationAdd.length) {
+        $consultationAdd.off('change').on('change', function () {
+            if ($(this).is(':checked')) {
+                $otherRolesAdd.prop('checked', false);
+                updateHiddenRole();
+            }
+        });
+
+        $otherRolesAdd.off('change').on('change', function () {
+            if ($(this).is(':checked')) {
+                $consultationAdd.prop('checked', false);
+                updateHiddenRole();
+            }
+        });
+    }
+
+    // Pour le formulaire de modification
+    const $consultationModif = $('#role_consultation_modif');
+    const $otherRolesModif = $('#role_projet_modif, #role_budget_modif, #role_liquidation_modif, #role_logistique_modif');
+
+    if ($consultationModif.length) {
+        $consultationModif.off('change').on('change', function () {
+            if ($(this).is(':checked')) {
+                $otherRolesModif.prop('checked', false);
+                updateHiddenRoleModif();
+            }
+        });
+
+        $otherRolesModif.off('change').on('change', function () {
+            if ($(this).is(':checked')) {
+                $consultationModif.prop('checked', false);
+                updateHiddenRoleModif();
+            }
+        });
+    }
+}
 $(document).ready(function () {
     if (window_width <= 768) {
         $(".sidebar").addClass("hide");
@@ -498,16 +540,17 @@ $(document).ready(function () {
     // Initialiser les rôles au chargement
     updateHiddenRole();
     updateHiddenRoleModif();
-    
+    setupConsultationExclusive();
+
     // Mettre à jour les rôles avant soumission du formulaire d'ajout
-    $('form[action="<?= base_url(\'registerUser\') ?>"]').on('submit', function() {
+    $('form[action="<?= base_url(\'registerUser\') ?>"]').on('submit', function () {
         updateHiddenRole();
     });
-    
+
     // Mettre à jour les rôles avant soumission du formulaire de modification
-    $('#modifClient').on('submit', function() {
+    $('#modifClient').on('submit', function () {
         updateHiddenRoleModif();
     });
-    
+
 
 });
