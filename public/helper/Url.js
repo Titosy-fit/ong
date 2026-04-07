@@ -1,11 +1,11 @@
 // EN LIGNE 
-BASE_URL = "https://ong-aim.tuto-info.com/";
+// BASE_URL = "https://ong-aim.tuto-info.com/";
 
 // EN SOFTIO 
 // const BASE_URL = 'https://phone.softio-app.com/index.php/';
 
 // EN LOCAL
-// const BASE_URL = "http://localhost/ong_aim/";
+const BASE_URL = "http://localhost/ong_aim/";
 
 const LOADER = `<div id="loaderFacture" style="display:flex; align-items:center; justify-content: center; width:100%; height:500px;">
 					<div class="spinner-border" role="status">

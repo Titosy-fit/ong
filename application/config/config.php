@@ -23,9 +23,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |
 */
 //EN LIGNE 
-$config['base_url'] = 'https://ong-aim.tuto-info.com/';
+// $config['base_url'] = 'https://ong-aim.tuto-info.com/';
 // EN LOCAL
-// $config['base_url'] = 'http://localhost/ong_aim/';
+$config['base_url'] = 'http://localhost/ong_aim/';
 
 
 /*
