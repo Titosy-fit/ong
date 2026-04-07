@@ -1,0 +1,110 @@
+<div class="form">
+                    <?php if (isset($_SESSION['let_test']) && !$_SESSION['let_test']) :  ?>
+                        <form action="" method="post">
+                        <?php else : ?>
+                            <form action="<?= base_url('Depense/register') ?>" method="post" enctype="multipart/form-data">
+                            <?php endif ?>
+
+                            <input type="hidden" id="idagent" name="idagent">
+
+
+                            <div class="mb-3">
+                                <label class="form-label">Activité liée aux dépenses :</label>
+                                <select name="activite" id="activite" class="form-select">
+                                    <?php foreach ($activites as $key => $activite) : ?>
+                                        <option value="<?= $activite->idactivite ?>"> <?= $activite->titre_activite ?></option>
+                                    <?php endforeach  ?>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Raison :</label>
+                                <select name="budget" id="budget" class="form-select" required>
+                                    <?php foreach ($budgets as $key => $budget) : ?>
+                                        <option value="<?= $budget->idbudget ?>"> <?= $budget->designation_budget ?></option>
+                                    <?php endforeach  ?>
+                                </select>
+
+                                <p id="budget-ms" class="text-danger d-none">
+                                    La raison de la dépense est obligatoire.
+                                </p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Montant :</label>
+                                <input type="number" min='0' class="form-control " id="montant" name="montant" required>
+                            </div>
+
+                            <?php if ($_SESSION['user_type'] == 'admin') :  ?>
+                                 
+                            <?php endif ?>
+
+
+                            <div class="mb-3">
+                                <label class="form-label">Ajouter une justification :</label>
+                                <input type="file" onchange="afficheImage(this)" class="form-control input_form-control" id="justification" name="justification" required>
+                                <p class="text-danger d-none" id="justification_ms">
+                                    La justification est obligatoire.
+                                </p>
+                            </div>
+
+
+                            <!-- <div class="mb-2">
+                            <label class="form-label"> Dépôt :</label>
+                            <?php if (count($pv) > 0) : ?>
+                                <select name="pv" class="form-select">
+                                    <?php for ($i = 0; $i < count($pv); $i++) : ?>
+                                        <?php if (isset($_SESSION['pv'])) : ?>
+                                            <?php if ($pv[$i]->idPointVente == $_SESSION['pv']) : ?>
+                                                <option value="<?= $pv[$i]->idPointVente ?>">
+                                                    <?= $pv[$i]->denomination_pv ?>
+                                                </option>
+                                            <?php endif  ?>
+                                        <?php else : ?>
+                                            <option value="<?= $pv[$i]->idPointVente ?>">
+                                                <?= $pv[$i]->denomination_pv ?>
+                                            </option>
+                                        <?php endif ?>
+
+                                    <?php endfor; ?>
+                                </select>
+                            <?php else : ?>
+                                <p class="text-danger">Veuillez inserer un Dépôt s'il vous plaît</p>
+                            <?php endif; ?>
+                        </div> -->
+                            <div class="_boutton">
+                                <?php if (isset($_SESSION['let_test']) && !$_SESSION['let_test']) :  ?>
+                                    <button type="button" class="btn btn-info" disabled>
+                                        <i class="fas fa-check"></i>
+                                        Valider
+                                    </button>
+                                <?php else : ?>
+                                    <button type="button" class="btn btn-info" id="valider">
+                                        <i class="fas fa-check"></i>
+                                        <div class="spinner-wrapper d-none" id="spinner_validation">
+                                            <div class="spinner-border"></div>
+                                        </div>
+                                        Valider
+                                    </button>
+                                    <button type="button" id="T-valider" class="d-none">ok</button>
+                                <?php endif  ?>
+                            </div>
+
+                            <?php if ($this->session->flashdata('register')) : ?>
+                                <script>
+                                    Myalert.added()
+                                </script>
+                            <?php endif;  ?>
+                            </form>
+                            <div class="logo">
+                                <h6>La justification : </h6>
+                                <div class="division2 d-flex justify-content-left align-items-center pt-2" id="spinner_container">
+                                    <div id="loading" class="d-none">
+                                        <div class="spinner-border text-primary"></div>
+                                    </div>
+                                    <div class="_image">
+                                        <img id="image" src="<?= Myurl('public/images/favicon/photo-camera.png') ?>" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                </div>

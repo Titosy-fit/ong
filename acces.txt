@@ -1,0 +1,12 @@
+dbname:   wmkjpwwb_hautezone
+username: wmkjpwwb_hautezone
+password: ?^8f#f#!+7=#O8=f+f
+
+
+-----------------------------
+FTP:
+courriel: haute_zone@tuto-info.com
+mot de passe: i!1%I!!XX%X#@%A2@v
+username: haute_zone@tuto-info.com
+serveur: node39-eu.n0c.com
+port: 21

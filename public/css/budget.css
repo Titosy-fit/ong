@@ -1,0 +1,23 @@
+.import {
+    display: none;
+}
+.place-search {
+    background: white;
+    margin-top: 20px ;
+    padding: 10px!important;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+}
+#search-budget {
+    margin-top: 32px;
+    height: 33px!important;
+    padding-top : 3px ;
+}
+
+@media screen and (max-width:770px) {
+    #search-budget {
+        margin-top: 10px!important;
+    
+    }
+}

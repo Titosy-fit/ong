@@ -1,0 +1,16 @@
+#tva_ , #tmp_{
+    margin-top:  6px ;
+}
+
+#sendvalidation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    /* color: white; */
+}
+
+#inclusion_container {
+    display: flex ;
+    gap: 25px ;
+}

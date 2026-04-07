@@ -1,0 +1,205 @@
+.argent {
+    display: flex;
+    justify-content: right;
+
+}
+
+.argent .thearg {
+    min-width: 250px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.thearg p {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.thearg label {
+    margin: 0;
+}
+
+#entrent {
+    border: 1px solid green;
+}
+
+#depense {
+    border: 1px solid red;
+}
+
+.argent .thearg,
+.argent label {
+    color: #5c5560 !important;
+}
+
+
+
+
+/* photo */
+.form {
+    display: flex;
+    gap: 15px;
+}
+
+.form form {
+    width: 550px;
+}
+
+
+._image {
+    position: relative;
+    height: 300px;
+    width: 300px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+}
+
+._image img {
+    object-fit: contain;
+    width: 80%;
+    height: 100%;
+    position: absolute;
+}
+
+@media all and (max-width:656px) {
+    .form {
+        flex-wrap: wrap;
+    }
+
+    .form form {
+        width: 100%;
+    }
+
+    .logo {
+        margin-top: 0 !important;
+    }
+}
+
+@media all and (max-width:360px) {
+    .logo {
+        width: 100%;
+    }
+
+    .logo ._image {
+        width: 100%;
+    }
+
+    ;
+
+}
+
+@media all and (max-width : 386px) {
+    .thearg {
+        width: 100%;
+    }
+}
+
+
+/* form */
+#searchform {
+    display: flex;
+    gap: 10px;
+}
+
+.group_pv {
+    width: 50%;
+}
+
+#searchform input,
+#searchform select {
+    height: 42.6px !important;
+}
+
+.group_form button {
+    height: 43.6px !important;
+    margin-top: 31px;
+    width: 131.633px;
+    margin-inline: 15px;
+}
+
+@media all and (max-width : 1018px) {
+    #searchform {
+        flex-wrap: wrap;
+    }
+
+    .group_form {
+        width: 49%;
+    }
+}
+
+@media all and (max-width : 932px) {
+    .group_form button {
+        height: 41px !important;
+        margin-top: 31px;
+    }
+}
+
+@media all and (max-width : 768px) {
+    .group_form button {
+        height: 36.6px !important;
+        margin-top: 27px;
+    }
+}
+
+@media all and (max-width : 456px) {
+    .group_form {
+        width: 100%;
+    }
+
+    .group_form div.ui.search.selection.dropdown {
+        width: 100% !important;
+    }
+
+    .group_form button {
+        margin-top: 0;
+        /* display: block ; */
+        margin-inline: 11px;
+        margin-left: auto;
+    }
+}
+
+/* form */
+
+button.container_entete {
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 25px !important;
+}
+
+.entete_accord {
+    display: inline-block;
+    height: inherit !important;
+    width: calc((100% / 3) - 50px);
+    border-inline: 2px solid #717171;
+    padding-inline: 2px;
+    color: #1f1f1f !important;
+    white-space: nowrap;
+    /* Empêche le texte de se diviser */
+    overflow: hidden;
+    /* Cache le texte qui dépasse */
+    text-overflow: ellipsis;
+    /* Ajoute les points de suspension */
+    font-size: 15px !important;
+    border-radius: 2px;
+}
+
+.accordion-item {
+    margin-bottom: 10px;
+}
+
+.input_like_text {
+    border-block: none;
+    background-color: transparent;
+    outline: none;
+    height: 37px;
+}
+
+.button_par_budget_container {
+    margin-top: 5px;
+}
+
+div#img_justificatif img{
+    width: 85px ;
+}

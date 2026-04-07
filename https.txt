@@ -1,0 +1,74 @@
+
+RewriteCond %{HTTPS} off
+
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
+
+<button type="submit" class="btn btn-info" id="valider">
+    <i class="fas fa-check"></i>
+    <div class="spinner-wrapper d-none" id="spinner_validation">
+        <div class="spinner-border"></div>
+    </div>
+    Valider
+</button>
+
+$( document ).on('click' , '#valider' , function (){
+	shwoSpinner( this , ['reference' , 'designation' , 'prix']) ; 
+})
+
+
+
+; Fichier de configuration PHP pour Apache
+
+; Affichage des erreurs (désactivé en production)
+display_errors = Off
+display_startup_errors = Off
+log_errors = On
+error_log = /var/log/php_errors.log
+error_reporting = E_ALL
+
+; Mémoire et temps d’exécution
+memory_limit = 1500M
+max_execution_time = 3600
+max_input_time = 3600
+
+; Taille des fichiers uploadés
+upload_max_filesize = 1500M
+post_max_size = 1500M
+
+; Gestion des sessions
+session.save_path = "/var/lib/php/sessions"
+session.gc_maxlifetime = 1440
+session.cookie_secure = On
+session.cookie_httponly = On
+session.use_strict_mode = On
+
+; Sécurité
+disable_functions = exec,passthru,shell_exec,system
+file_uploads = On
+upload_tmp_dir = "/tmp"
+open_basedir = /var/www:/tmp
+
+; Extensions recommandées
+extension=mysqli
+extension=pdo_mysql
+extension=gd
+extension=curl
+extension=mbstring
+extension=opcache
+
+; Optimisation du cache
+opcache.enable = 1
+opcache.memory_consumption = 128
+opcache.interned_strings_buffer = 8
+opcache.max_accelerated_files = 10000
+opcache.revalidate_freq = 60
+
+; Paramètres de dates et heures
+date.timezone = "Europe/Paris"
+
+; Réglages de langue par défaut
+default_charset = "UTF-8"
+
+; Réglages des fichiers temporaires
+upload_tmp_dir = "/tmp"

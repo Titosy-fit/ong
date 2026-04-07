@@ -1,0 +1,12 @@
+DocumentRoot "/var/www/softio-app"
+ServerName softio-app.com
+<Directory "/var/www/softio-app">
+    Options None
+    Require all granted
+</Directory>
+<FilesMatch \.php$>
+    SetHandler "proxy:unix:/run/php/php8.1-fpm.sock|fcgi://localhost"
+</FilesMatch>
+RewriteEngine on
+RewriteCond %{SERVER_NAME} =softio-app.com
+RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]

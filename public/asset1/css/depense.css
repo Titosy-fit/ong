@@ -1,0 +1,204 @@
+.argent {
+    display: flex;
+    justify-content: right;
+
+}
+
+.argent .thearg {
+    min-width: 250px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.thearg p {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.thearg label {
+    margin: 0;
+}
+
+#entrent {
+    border: 1px solid green;
+}
+
+#depense {
+    border: 1px solid red;
+}
+
+.argent .thearg,
+.argent label {
+    color: #5c5560 !important;
+}
+
+
+
+
+/* photo */
+.form {
+    display: flex;
+    gap: 15px;
+}
+
+.form form {
+    width: 550px;
+}
+
+
+._image {
+    position: relative;
+    height: 300px;
+    width: 300px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+}
+
+._image img {
+    object-fit: contain;
+    width: 80%;
+    height: 100%;
+    position: absolute;
+}
+
+@media all and (max-width:656px) {
+    .form {
+        flex-wrap: wrap;
+    }
+
+    .form form {
+        width: 100%;
+    }
+
+    .logo {
+        margin-top: 0 !important;
+    }
+}
+
+@media all and (max-width:360px) {
+    .logo {
+        width: 100%;
+    }
+
+    .logo ._image {
+        width: 100%;
+    }
+
+    ;
+
+}
+
+@media all and (max-width : 386px) {
+    .thearg {
+        width: 100%;
+    }
+}
+
+/* formulaire de recherche  */
+#searchform {
+    display: flex;
+    flex-wrap: wrap;
+    padding-inline: 0;
+}
+
+.group_form {
+    width: calc(1466px / 5);
+    padding-inline: 5px;
+}
+
+.btn_rechreche {
+    width: max-content;
+    padding-top: 32px;
+}
+
+#searchform input,
+#searchform select,
+.btn_rechreche button {
+    height: 43px;
+}
+
+
+@media all and (max-width : 1566px) {
+    #searchform {
+        gap: 5px;
+    }
+
+    .group_form {
+        width: calc(98% / 4);
+    }
+
+    .btn_rechreche {
+        width: 100%;
+        display: flex;
+        justify-content: right;
+        padding-top: 5px;
+        padding-right: 13px;
+    }
+}
+
+@media all and (max-width : 1207px) {
+    #searchform {
+        gap: 5px;
+    }
+
+    .group_form {
+        width: calc(98% / 3);
+    }
+
+    .btn_rechreche {
+        padding-top: 32px;
+        justify-content: left;
+        width: max-content;
+    }
+
+    .group_form:nth-child(4) {
+        width: calc((98% / 3) * 2 + 5px);
+    }
+
+}
+
+@media all and (max-width : 1086px) {
+    .group_form {
+        width: calc(98% / 2);
+    }
+
+    .group_form:not(.group_form:nth-child(1)):not(.group_form:nth-child(2)):not(.group_form:nth-child(5)) {
+        width: calc(98% / 3 + 50px);
+    }
+
+    .group_form.btn_rechreche {
+        width: calc(98% / 3 - 100px);
+    }
+
+
+}
+
+@media all and (max-width : 1019px) {
+    .group_form {
+        width: calc(98% / 2) !important;
+    }
+
+    .group_form.btn_rechreche {
+        width: 99% !important;
+        justify-content: right;
+        padding-top: 0px;
+        padding-right: 5px;
+    }
+}
+
+@media all and (max-width : 768px) {
+    #searchform #motclet {
+        height: 35px !important;
+    }
+}
+
+@media all and (max-width : 566px) {
+
+    .group_form {
+        width: calc(99%) !important;
+    }
+}
+
+/* formulaire de recherche  */

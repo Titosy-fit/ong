@@ -1,0 +1,19 @@
+DocumentRoot "/var/www/phone.softio-app.com"
+ServerName phone.softio-app.com
+
+<Directory "/var/www/phone.softio-app.com">
+    Options None
+    AllowOverride All
+    Require all granted
+</Directory>
+
+<FilesMatch \.php$>
+    SetHandler "proxy:unix:/run/php/php8.1-fpm.sock|fcgi://localhost"
+</FilesMatch>
+
+RewriteEngine on
+RewriteCond %{SERVER_NAME} =phone.softio-app.com
+RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
