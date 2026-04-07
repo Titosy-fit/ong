@@ -1,6 +1,6 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /
+    RewriteBase /ong_aim/
 
     # Redirige tout vers index.php sauf les vrais fichiers/dossiers
     RewriteCond %{REQUEST_FILENAME} !-f

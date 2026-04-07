@@ -171,7 +171,7 @@ class Auth extends CI_Controller
                                 $_SESSION['abonne'] = true;
                                 $_SESSION['mode'] = $connect[0]->mode;
 
-                                redirect('dispatch');
+                                redirect('projet');
                             } else {
 
                                 $_SESSION['user_type'] = 'admin';
@@ -181,7 +181,7 @@ class Auth extends CI_Controller
                                 $_SESSION['abonne'] = true; //modifier
                                 $_SESSION['mode'] = $connect[0]->mode;
 
-                                redirect('dispatch');
+                                redirect('projet');
                             }
                         } else {
                             $date = new DateTime($connect[0]->dateinscription);
@@ -207,7 +207,7 @@ class Auth extends CI_Controller
                                 $_SESSION['time_rest'] = $diffInDays;
                                 $_SESSION['mode'] = $connect[0]->mode;
 
-                                redirect('dispatch');
+                                redirect('projet');
                             } else {
                                 $_SESSION['user_type'] = 'admin';
                                 $_SESSION['email'] = $email;
@@ -215,7 +215,7 @@ class Auth extends CI_Controller
                                 // $_SESSION['let_test'] = false;
                                 $_SESSION['mode'] = $connect[0]->mode;
 
-                                redirect('dispatch');
+                                redirect('projet');
                             }
                         }
                     } else {
@@ -250,7 +250,7 @@ class Auth extends CI_Controller
                                 $_SESSION['time_rest'] = $diffInDays;
                                 $_SESSION['mode'] = $connect[0]->mode;
 
-                                redirect('dispatch');
+                                redirect('projet');
                             } else {
                                 $_SESSION['user_type'] = 'user';
                                 $_SESSION['email'] = $email;
@@ -260,7 +260,7 @@ class Auth extends CI_Controller
                                 // $_SESSION['let_test'] = false;
                                 $_SESSION['abonne'] = true; //modifier
                                 $_SESSION['mode'] = $connect[0]->mode;
-                                redirect('dispatch');
+                                redirect('projet');
                             }
                         } else {
                             $date = new DateTime($admin[0]->dateinscription);
@@ -287,7 +287,7 @@ class Auth extends CI_Controller
                                 $_SESSION['time_rest'] = $diffInDays;
                                 $_SESSION['mode'] = $connect[0]->mode;
 
-                                redirect('dispatch');
+                                redirect('projet');
                             } else {
                                 $_SESSION['user_type'] = 'user';
                                 $_SESSION['email'] = $email;
@@ -296,7 +296,7 @@ class Auth extends CI_Controller
                                 $_SESSION['idadmin'] = $connect[0]->idadmin;
                                 // $_SESSION['let_test'] = false;
                                 $_SESSION['mode'] = $connect[0]->mode;
-                                redirect('dispatch');
+                                redirect('projet');
                             }
                         }
                     }
