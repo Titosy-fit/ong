@@ -93,7 +93,21 @@ class Demande extends CI_Controller
      *
      * @return void
      */
-    public function validate() {}
+    public function validate()
+    {
+        $datas = [];
+        if (isset($_POST['data'])) {
+            $datas = $_POST['data'];
+        }
+
+        foreach ($datas  as $key => $data) {
+            $datas[$key]['idadmin'] = $_SESSION['idadmin'];
+        }
+
+        $this->dispatch->insertPanier($datas);
+        $this->session->set_flashdata('success', true);
+        $this->session->set_userdata('ajouter', true);
+    }
 
     /**
      * Prendre les info du demande par la numero de demande 
