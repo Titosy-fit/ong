@@ -159,9 +159,7 @@ $(document.body).on("click", "#valider", function () {
 $(document).on('click', '.delete', function () {
     let idtransfert = $(this).data('idtransfert');
     let elem = $(this);
-    Myalert.delete();
-    $(document).on('click', '#confirmeDelete', function () {
-        
+    Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
         $.ajax({
             method: 'post',
             url: base_url('Transfert/delete'),
@@ -170,7 +168,6 @@ $(document).on('click', '.delete', function () {
         }).done(function (response) {
             if (response.success) {
                 $(elem).closest('tr').remove();
-                $('#cancelDelete').click();
                 Myalert.deleted();
             }
             else {
@@ -179,8 +176,7 @@ $(document).on('click', '.delete', function () {
         }).fail(function (err) {
             console.error('erreur dans la suppression :' + err);
         })
-    })
-
+    });
 })
 
 
@@ -188,9 +184,7 @@ $(document).on('click', '.recevoir', function () {
     const idtransfert = $(this).data('idtransfert');
     const elem = $(this);
 
-    Myalert.delete('Êtes-vous sûr de vouloir recevoir ce transfert ?');
-    $(document).on('click', '#confirmeDelete', function () {
-        $('#cancelDelete').click();
+    Myalert.delete('Êtes-vous sûr de vouloir recevoir ce transfert ?', function () {
         $.ajax({
             method: 'post',
             url: base_url('Transfert/receive'),

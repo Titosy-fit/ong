@@ -40,10 +40,9 @@ $(document).on('click', '#teste_validation', function () {
 
 $(document).ready(function () {
     $(document).on('click', '.delete', function () {
-        Myalert.delete('Cette action va supprimer tous les approvisionnements et les commandes liés à ce fournisseur. Êtes-vous sûr de vouloir continuer ');
         const idfournisseur = $(this).data('idfournisseur');
         const tel_fournisseur = $(this).data('tel_fournisseur');
-        $(document).on('click', '#confirmeDelete', function () {
+        Myalert.delete('Cette action va supprimer tous les approvisionnements et les commandes liés à ce fournisseur. Êtes-vous sûr de vouloir continuer ', function () {
             $.ajax({
                 method: 'post',
                 url: base_url('Fournisseur/delete'),
@@ -56,8 +55,7 @@ $(document).ready(function () {
             }).fail(function () {
                 console.error('Erreur dans la suppression du fournisseur ');
             })
-        })
-
+        });
     })
 
     $(document).on('click', '.edit', function () {

@@ -43,9 +43,7 @@ $(document ).on('click', '#modifer' , function (){
 
 $(document).on('click', '.ractive', function () {
     const idadmin = $(this).data('id');
-    Myalert.delete('Êtes-vous sûr de vouloir réactiver ?');
-
-    $(document).on('click', '#confirmeDelete', function () {
+    Myalert.delete('Êtes-vous sûr de vouloir réactiver ?', function () {
         $.ajax({
             method: 'post',
             url: base_url('Admin/reactive'),
@@ -56,6 +54,6 @@ $(document).on('click', '.ractive', function () {
             console.error('Erreur dans la reactivation ');
 
         })
-    })
+    });
 })
 

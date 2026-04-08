@@ -3,10 +3,7 @@ $(document.body).on('click', ".supprimer", function () {
 	let idcommande = $(this).data('idcommande');
 	const elem = $(this);
 
-	Myalert.delete();
-
-	$('#confirmeDelete').on('click', function () {
-		$('.close').click();
+	Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
 		$.ajax({
 			method: 'post',
 			url: base_url('Listecommande/deleteListe'),
@@ -21,7 +18,7 @@ $(document.body).on('click', ".supprimer", function () {
 		}).fail(function () {
 			console.log('error');
 		})
-	})
+	});
 });
 
 $(document.body).on("click", ".detail", function () {

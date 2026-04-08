@@ -399,9 +399,7 @@ function deleteIt(elem) {
 	const id = elem.getAttribute("data-id");
 	const ref = elem.getAttribute("data-ref");
 
-	Myalert.delete('Cette action va supprimer toutes les données liés à ce produit. Êtes-vous sûr de vouloir continuer ?');
-
-	$('#confirmeDelete').on('click', function () {
+	Myalert.delete('Cette action va supprimer toutes les données liés à ce produit. Êtes-vous sûr de vouloir continuer ?', function () {
 		$.ajax({
 			url: base_url("deleteProd"),
 			type: "POST",
@@ -416,7 +414,7 @@ function deleteIt(elem) {
 				}
 			}
 		});
-	})
+	});
 }
 
 

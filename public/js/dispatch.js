@@ -238,12 +238,9 @@ function append_tableau() {
  * suppression dans le panier
  */
 $(document).on('click', '.delete', function () {
-	Myalert.delete();
 	const id = $(this).data('id');
 	const tr = $(this).closest('tr');
-	$(document).on('click', '#confirmeDelete', function () {
-		$('#cancelDelete').click();
-
+	Myalert.delete("Êtes-vous sûr de vouloir supprimer cet élément du panier ?", function () {
 		let identification = id.split('_');
 		const unite_identification = $(tr).data('unite_identification');
 		const quantite = $(tr).data('quantite');
@@ -253,8 +250,6 @@ $(document).on('click', '.delete', function () {
 		if (tableau_panier[identification[0]]) {
 			tableau_panier[identification[0]].splice(identification[1], 1);
 			// pour l'affichage du qte disponible 
-
-
 
 			if (allunite_panier[reference]) {
 				let qte_deleted = qteMinUnit(allunite_panier[reference], quantite, unite_identification)
@@ -274,8 +269,7 @@ $(document).on('click', '.delete', function () {
 		addLocaleStorage('tableau_panier', tableau_panier);
 		addLocaleStorage('qte_produit_panier', qte_produit_panier);
 		$('#tableau').html(append_tableau());
-	})
-
+	});
 })
 
 
@@ -696,15 +690,13 @@ $(document.body).on("submit", "#registerbeneficiaire", function (e) {
 				$('#validation').html(panier_modal_content(nom.toUpperCase() + ' ' + prenom, numero));
 				$('.modal-footer').removeClass('d-none');
 			} else {
-				Myalert.delete('Ce bénéficiaire existe déjà.Voulez-vous utiliser l\'existant ?');
-				$('#confirmeDelete').on('click', function () {
+				Myalert.delete('Ce bénéficiaire existe déjà. Voulez-vous utiliser l\'existant ?', function () {
 					const info = response.data;
 					let beneficiaire_nom = info.nombene.toUpperCase() + ' ' + info.prenombene;
 					let id = info.idbeneficiaire;
 					$('#validation').html(panier_modal_content(beneficiaire_nom, id));
 					$('.modal-footer').removeClass('d-none');
-					$('#close').click();
-				})
+				});
 			}
 		}).fail(function () {
 			console.log('erreur sur l\'enregistrement du beneficiaire !');

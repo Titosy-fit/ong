@@ -95,8 +95,7 @@ $(document).ready(function () {
     $( document ).on('click' , '.delete' , function (){
         const idbeneficiaire = $( this ).data('id') ;
         
-        Myalert.delete() ; 
-        $( document ).on('click' , '#confirmeDelete' , function (){
+        Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
             $.ajax({
                 type: "post",
                 url: base_url('Beneficiaire/delete'),
@@ -112,7 +111,7 @@ $(document).ready(function () {
                     }
                 }
             });
-        })
+        });
 
     })
 })

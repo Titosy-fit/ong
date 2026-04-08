@@ -37,10 +37,7 @@ function hideSuccessAlert() {
 function deleteIt(elem) {
 	const id = elem.getAttribute("data-id");
 
-
-	Myalert.delete("Cette action va supprimer toutes les données liées à ce point de vente. Êtes-vous sûr de vouloir continuer ?");
-
-	$('#confirmeDelete').on('click', function () {
+	Myalert.delete("Cette action va supprimer toutes les données liées à ce point de vente. Êtes-vous sûr de vouloir continuer ?", function () {
 		$.ajax({
 			method: 'post',
 			url: base_url('deletePv'),
@@ -52,7 +49,7 @@ function deleteIt(elem) {
 				}
 			}
 		})
-	})
+	});
 }
 
 

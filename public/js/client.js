@@ -80,8 +80,7 @@ function Donneclient(elem) {
 function deleteIt(elem) {
 	const id = elem.getAttribute("data-id");
 
-	Myalert.delete()
-	$('#confirmeDelete').on('click', function () {
+	Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
 		$.ajax({
 			url: base_url("Clients/deleteClient"),
 			type: "POST",
@@ -93,7 +92,7 @@ function deleteIt(elem) {
 				}
 			}
 		});
-	})
+	});
 }
 
 $(document.body).on("click", "#modifier", function () {

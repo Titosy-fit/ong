@@ -110,8 +110,7 @@ function deleteIt(elem) {
 	const groupe = elem.getAttribute("data-groupe");
 	const idmateriel = elem.getAttribute("data-idproduit");
 
-	Myalert.delete()
-	$('#confirmeDelete').on('click', function () {
+	Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
 		$.ajax({
 			method: 'post',
 			url: base_url('Prix/deletePrix'),
@@ -122,8 +121,8 @@ function deleteIt(elem) {
 					window.location.reload()
 				}
 			}
-		})
-	})
+		});
+	});
 }
 
 let window_width = window.innerWidth;

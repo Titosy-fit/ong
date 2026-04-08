@@ -354,15 +354,10 @@ function append_tableau() {
 }
 
 /**
- * suppression dans le panier
- */
-$(document).on("click", ".delete", function () {
-	Myalert.delete();
+ * suppression dans le pa$(document).on("click", ".delete", function () {
 	const id = $(this).data("id");
 	const tr = $(this).closest("tr");
-	$(document).on("click", "#confirmeDelete", function () {
-		$("#cancelDelete").click();
-
+	Myalert.delete("Êtes-vous sûr de vouloir supprimer cet élément du panier ?", function () {
 		let identification = id.split("_");
 		const unite_identification = $(tr).data("unite_identification");
 		const quantite = $(tr).data("quantite");
@@ -396,6 +391,8 @@ $(document).on("click", ".delete", function () {
 		addLocaleStorage("tableau_panier_demande", tableau_panier_demande);
 		addLocaleStorage("qte_produit_panier_demande", qte_produit_panier_demande);
 		$("#tableau").html(append_tableau());
+	});
+}););
 	});
 }) /
 	/**
@@ -684,17 +681,16 @@ $(document.body).on("submit", "#registeruser", function (e) {
 					$(".modal-footer").removeClass("d-none");
 				} else {
 					Myalert.delete(
-						"Ce bénéficiaire existe déjà.Voulez-vous utiliser l'existant ?",
+						"Ce bénéficiaire existe déjà. Voulez-vous utiliser l'existant ?",
+						function () {
+							const info = response.data;
+							let beneficiaire_nom =
+								info.nomUser.toUpperCase() + " " + info.prenomUser;
+							let id = info.iduser;
+							$("#validation").html(panier_modal_content(beneficiaire_nom, id));
+							$(".modal-footer").removeClass("d-none");
+						}
 					);
-					$("#confirmeDelete").on("click", function () {
-						const info = response.data;
-						let beneficiaire_nom =
-							info.nomUser.toUpperCase() + " " + info.prenomUser;
-						let id = info.iduser;
-						$("#validation").html(panier_modal_content(beneficiaire_nom, id));
-						$(".modal-footer").removeClass("d-none");
-						$("#close").click();
-					});
 				}
 			})
 			.fail(function () {

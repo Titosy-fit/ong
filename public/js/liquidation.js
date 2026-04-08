@@ -468,9 +468,7 @@ $(document).ready(function () {
     $(document.body).on('click', ".supprimer", function () {
         let idliquidation = $(this).data('id');
         const elem = $(this);
-        Myalert.delete();
-        $('#confirmeDelete').on('click', function () {
-            $('.close').click();
+        Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
             $.ajax({
                 method: 'post',
                 url: base_url('Liquidation/delete'),
@@ -485,7 +483,7 @@ $(document).ready(function () {
             }).fail(function () {
                 console.log('error');
             })
-        })
+        });
     });
     $(document.body).on('input change', "#retourner", function () {
         let montantRetour = parseInt($(this).val()) ;

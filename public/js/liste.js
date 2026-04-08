@@ -1,9 +1,7 @@
 $(document.body).on('click', ".supprimer", function () {
 	let idfacture = $(this).data('idfacture');
 	const elem = $(this);
-	Myalert.delete();
-	$('#confirmeDelete').on('click', function () {
-		$('.close').click();
+	Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
 		$.ajax({
 			method: 'post',
 			url: base_url('Liste/deleteListe'),
@@ -18,7 +16,7 @@ $(document.body).on('click', ".supprimer", function () {
 		}).fail(function () {
 			console.log('error');
 		})
-	})
+	});
 });
 
 $(document).on('click', '.imprim', function () {

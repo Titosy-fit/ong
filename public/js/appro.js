@@ -230,9 +230,8 @@ $(document.body).on("change", "#reference", function () {
 });
 
 $(document.body).on("click", ".delete", function () {
-	Myalert.delete();
 	const idappro = $(this).data("idappro");
-	$("#confirmeDelete").on("click", function () {
+	Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
 		$.ajax({
 			method: "post",
 			url: base_url("deleteAppro"),

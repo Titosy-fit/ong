@@ -1,8 +1,7 @@
 $( document ).ready( function (){
     $( document ).on('click' , '.delete' , function () {
         const id = $( this ).data('id') ; 
-        Myalert.delete() ;
-        $( document ).on('click' , '#confirmeDelete' , function (){
+        Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
             $.ajax({
                 method : 'post' , 
                 url : base_url('Abonnement/delete') , 
@@ -13,7 +12,7 @@ $( document ).ready( function (){
                 console.error('Erreur dans la suppression');
                 
             })
-        })
+        });
     })
 
     $( document ).on('click' ,'.edit' , function (){

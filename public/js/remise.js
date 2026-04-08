@@ -55,11 +55,8 @@ function calacule_totale() {
 // });
 
 $(document.body).on('click', '.delete', function () {
-	Myalert.delete()
 	const idremise = $(this).data('idremise');
-
-
-	$('#confirmeDelete').on('click', function () {
+	Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
 		$.ajax({
 			method: 'post',
 			url: base_url("Remise/delete"),
@@ -71,7 +68,7 @@ $(document.body).on('click', '.delete', function () {
 				}
 			}
 		})
-	})
+	});
 })
 
 $(document).on('click', '#valider', function () {

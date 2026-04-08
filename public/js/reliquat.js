@@ -187,9 +187,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.delete', function () {
         const idreliquat = $(this).data('id');
-        Myalert.delete();
-
-        $('#confirmeDelete').click(function () {
+        Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
             $.ajax({
                 method: 'post',
                 url: base_url('Reliquat/delete'),
@@ -199,7 +197,7 @@ $(document).ready(function () {
             }).fail(function () {
                 console.error('erreur dans la suppression du activite');
             })
-        })
+        });
     })
     $(document).on('change', '#activite', function () {
         const idactivite = $(this).val();

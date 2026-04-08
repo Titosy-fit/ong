@@ -182,9 +182,7 @@ $(document).on('click', '#valider', function () {
 function deleteIt(elem) {
     const id = elem.getAttribute("data-id");
 
-    Myalert.delete("Cette action va supprimer toutes les données insérées par cet utilisateur. Êtes-vous sûr de vouloir continuer ?")
-
-    $('#confirmeDelete').on('click', function () {
+    Myalert.delete("Cette action va supprimer toutes les données insérées par cet utilisateur. Êtes-vous sûr de vouloir continuer ?", function () {
         $.ajax({
             url: base_url("deleteUser"),
             type: "POST",
@@ -203,9 +201,7 @@ function deleteIt(elem) {
 function reinitialize(elem) {
     const id = elem.getAttribute("data-id");
 
-    Myalert.delete('Etes-vous sur de réinitialiser se profil ?');
-
-    $('#confirmeDelete').on('click', function () {
+    Myalert.delete('Etes-vous sur de réinitialiser se profil ?', function () {
         $.ajax({
             url: base_url("mdpUser"),
             type: "POST",

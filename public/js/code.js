@@ -98,8 +98,7 @@ $(document.body).on('click', '.printCode', function () {
 function deleteIt(elem) {
 	const id = elem.getAttribute("data-id");
 
-	Myalert.delete()
-	$('#confirmeDelete').on('click', function () {
+	Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
 		$.ajax({
 			url: base_url("CodeBarre/deleteCode"),
 			type: "POST",
@@ -111,7 +110,7 @@ function deleteIt(elem) {
 				}
 			}
 		});
-	})
+	});
 }
 
 let window_width = window.innerWidth;

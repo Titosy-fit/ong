@@ -183,8 +183,7 @@ $(document).ready(function () {
     $(document).on('click', '.delete', function () {
         let id = $(this).data('id');
 
-        Myalert.delete();
-        $(document.body).on('click', '#confirmeDelete', function () {
+        Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
             console.log(id);
             $.ajax({
                 method: 'POST',
@@ -198,7 +197,7 @@ $(document).ready(function () {
             }).fail(function () {
                 console.error('Erreur dans le suppression');
             })
-        })
+        });
     })
 
 

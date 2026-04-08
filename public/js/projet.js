@@ -82,35 +82,30 @@ $(document).ready(function () {
         })
     })
 
- $(document).on('click', '.delete', function () {
+  $(document).on('click', '.delete', function () {
     const idprojet = $(this).data('id');
-
-    if (!confirm("Voulez-vous vraiment supprimer ce projet ?")) {
-        return;
-    }
-
     const $btn = $(this);
-    $btn.prop('disabled', true)
-        .html('<i class="fa-solid fa-spinner fa-spin"></i>');
 
-    $.ajax({
-        url: base_url('Projet/delete'),
-        method: 'POST',
-        data: { idprojet: idprojet },
-        success: function () {
-            Myalert.deleted();       // ← ici, après succès
-            location.reload();
-        },
-        error: function () {            Myalert.deleted(); 
-                        location.reload();
-      // ← ici, après succès
+    Myalert.delete("Voulez-vous vraiment supprimer ce projet ?", function () {
+        $btn.prop('disabled', true)
+            .html('<i class="fa-solid fa-spinner fa-spin"></i>');
 
-    
-        },
-        complete: function () {
-            $btn.prop('disabled', false)
-                .html('<i class="fa-solid fa-trash"></i>');
-        }
+        $.ajax({
+            url: base_url('Projet/delete'),
+            method: 'POST',
+            data: { idprojet: idprojet },
+            success: function () {
+                Myalert.deleted();
+                location.reload();
+            },
+            error: function () {
+                Myalert.erreur("Erreur lors de la suppression");
+            },
+            complete: function () {
+                $btn.prop('disabled', false)
+                    .html('<i class="fa-solid fa-trash"></i>');
+            }
+        });
     });
 });
     

@@ -4,10 +4,7 @@ $( document).ready( function (){
 		let idproforma = $(this).data('idproforma');
 		const elem = $( this ) ; 
 	
-		Myalert.delete();
-	
-		$('#confirmeDelete').on('click', function () {
-			$('.close').click() ; 
+		Myalert.delete("Êtes-vous sûr de vouloir supprimer ?", function () {
 			$.ajax({
 				method: 'post',
 				url: base_url('Listeproforma/deleteListe'),
@@ -22,7 +19,7 @@ $( document).ready( function (){
 			}).fail(function () {
 				console.log('error');
 			})
-		})
+		});
 	}) ; 
 	
 	$(document.body).on("click", ".detail", function () {
