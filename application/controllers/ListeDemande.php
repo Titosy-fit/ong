@@ -204,6 +204,9 @@ class ListeDemande extends CI_Controller
 
       $affichage .= "<p><span  style='display :inline-block ; width :105px ; '> Nom </span> <span  '> : " . strtoupper($users->nomUser) . "</span></p>";
       $affichage .= "<p><span  style='display :inline-block ; width :105px ; '> Prénom </span> <span  '>  : "  . ucfirst($users->prenomUser) . "</span></p>";
+      $affichage .= "<p><span  style='display :inline-block ; width :105px ; '> CIN </span> <span  '>  : CIN: "  . ($users->numero_cin ?? "—") . "</span></p>";
+      $affichage .= "<p><span  style='display :inline-block ; width :105px ; '> Fokontany </span> <span  '>  : "  . ($users->fokotany ?? "—") . "</span></p>";
+      $affichage .= "<p><span  style='display :inline-block ; width :105px ; '> Commune </span> <span  '>  : "  . ($users->commune ?? "—") . "</span></p>";
     }
 
     $affichage .= "</div>";

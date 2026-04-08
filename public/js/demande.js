@@ -740,7 +740,10 @@ function recherche_user_content(recherche = "") {
 								<th>Nom</th>
 								<th>Prénom</th>
 								<th>Adresse</th>
-								<th>Numéro Télephone</th>
+								<th>Fokotany</th>
+								<th>Commune</th>
+								<th>Numéro Téléphone</th>
+								<th>CIN</th>
 								<th>Email</th>
 							</tr>
 						</thead>
@@ -766,12 +769,22 @@ function recherche_user_content(recherche = "") {
 				recherche += `
 							<tr >
 								<td> 
-									<input class='choix_user' type="radio" name='user' data-tel='${element.idUser}' data-nom = '${element.nomUser}' data-prenom = '${element.prenomUser}'>
+									<input class='choix_user' type="radio" name='user' 
+										data-tel='${element.idUser}' 
+										data-nom='${element.nomUser}' 
+										data-prenom='${element.prenomUser}'
+										data-contact='${element.contact}'
+										data-cin='${element.numero_cin || ""}'
+										data-fokotany='${element.fokotany || ""}'
+										data-commune='${element.commune || ""}'>
 								</td>
 								<td>${element.nomUser}</td>
 								<td>${element.prenomUser}</td>
 								<td>${element.adress}</td>
-								<td>${element.contact}</td>`;
+								<td>${element.fokotany || "—"}</td>
+								<td>${element.commune || "—"}</td>
+								<td>${element.contact}</td>
+								<td>${element.numero_cin || "—"}</td>`;
 				if (element.mail != "") {
 					recherche += `<td>${element.mail}</td></tr>
 						
@@ -811,6 +824,10 @@ $(document).on("change", ".choix_user", function () {
 	$("#search_valide").attr("data-tel", $(this).data("tel"));
 	$("#search_valide").attr("data-nom", $(this).data("nom"));
 	$("#search_valide").attr("data-prenom", $(this).data("prenom"));
+	$("#search_valide").attr("data-contact", $(this).data("contact"));
+	$("#search_valide").attr("data-cin", $(this).data("cin"));
+	$("#search_valide").attr("data-fokotany", $(this).data("fokotany"));
+	$("#search_valide").attr("data-commune", $(this).data("commune"));
 });
 
 /**
@@ -836,8 +853,22 @@ $(document).on("click", "#search_valide", function () {
 	const id = $(this).data("tel");
 	const nom = $(this).data("nom");
 	const prenom = $(this).data("prenom");
-	let contenue = "";
-	contenue = nom.toUpperCase() + " " + prenom;
+	const contact = $(this).data("contact");
+	const cin = $(this).data("cin");
+	const fokotany = $(this).data("fokotany");
+	const commune = $(this).data("commune");
+
+	$("#idagent").val(id);
+	$("#selected_agent_name").html(`
+        <strong>${nom} ${prenom}</strong><br>
+        <small><i class="fa-solid fa-phone"></i> ${contact}
+        ${cin ? ` | <i class="fa-solid fa-id-card"></i> CIN: ${cin}` : ""}
+        ${fokotany ? ` | Fokotany: ${fokotany}` : ""}
+        ${commune ? ` | Commune: ${commune}` : ""}</small>
+    `);
+	$("#selected_agent_info").removeClass("d-none");
+
+	let contenue = nom.toUpperCase() + " " + prenom;
 	$("#validation").html(panier_modal_content(contenue, id));
 	$(".modal-footer").removeClass("d-none");
 });
@@ -986,6 +1017,8 @@ $(document).on("keyup", "#agent_search", function () {
                         data-id="${user.idUser}" 
                         data-tel="${user.contact}" 
                         data-cin="${user.numero_cin || ""}" 
+                        data-fokotany="${user.fokotany || ""}"
+                        data-commune="${user.commune || ""}"
                         data-nom="${user.nomUser}" 
                         data-prenom="${user.prenomUser}">
                     `);
@@ -1009,6 +1042,8 @@ $(document).on("change", "#agent_search", function () {
 			const id = options[i].getAttribute("data-id");
 			const tel = options[i].getAttribute("data-tel");
 			const cin = options[i].getAttribute("data-cin");
+			const fokotany = options[i].getAttribute("data-fokotany");
+			const commune = options[i].getAttribute("data-commune");
 			const nom = options[i].getAttribute("data-nom");
 			const prenom = options[i].getAttribute("data-prenom");
 
@@ -1016,7 +1051,9 @@ $(document).on("change", "#agent_search", function () {
 
 			$("#agent_info").html(`
                 <span class="text-success fw-bold">✅ ${nom} ${prenom}</span><br>
-                <small>Téléphone : ${tel} | CIN : ${cin || "—"}</small>
+                <small>Téléphone : ${tel} | CIN: ${cin || "—"} 
+                ${fokotany ? ` | Fokotany : ${fokotany}` : ""}
+                ${commune ? ` | Commune : ${commune}` : ""}</small>
             `);
 			break;
 		}
@@ -1067,13 +1104,17 @@ function searchAgentsInline(recherche) {
                      data-nom="${escapeHtml(agent.nomUser)}" 
                      data-prenom="${escapeHtml(agent.prenomUser)}" 
                      data-contact="${agent.contact}" 
-                     data-cin="${agent.numero_cin || ""}">
+                     data-cin="${agent.numero_cin || ""}"
+                     data-fokotany="${agent.fokotany || ""}"
+                     data-commune="${agent.commune || ""}">
                     <div><i class="fa-solid fa-user-circle text-info"></i> 
                          <strong>${escapeHtml(agent.nomUser)}</strong> ${escapeHtml(agent.prenomUser)}
                     </div>
                     <small class="text-muted">
                         <i class="fa-solid fa-phone"></i> ${agent.contact}
-                        ${agent.numero_cin ? ` | <i class="fa-solid fa-id-card"></i> ${agent.numero_cin}` : ""}
+                        ${agent.numero_cin ? ` | <i class="fa-solid fa-id-card"></i> CIN: ${agent.numero_cin}` : ""}
+                        ${agent.fokotany ? ` | Fokotany: ${agent.fokotany}` : ""}
+                        ${agent.commune ? ` | Commune: ${agent.commune}` : ""}
                     </small>
                 </div>`;
 				});
@@ -1115,12 +1156,16 @@ $(document).on("click", ".agent-result-item", function () {
 	const prenom = $(this).data("prenom");
 	const contact = $(this).data("contact");
 	const cin = $(this).data("cin");
+	const fokotany = $(this).data("fokotany");
+	const commune = $(this).data("commune");
 
 	$("#idagent").val(id);
 	$("#selected_agent_name").html(`
         <strong>${nom} ${prenom}</strong><br>
         <small><i class="fa-solid fa-phone"></i> ${contact}
-        ${cin ? ` | <i class="fa-solid fa-id-card"></i> ${cin}` : ""}</small>
+        ${cin ? ` | <i class="fa-solid fa-id-card"></i> CIN: ${cin}` : ""}
+        ${fokotany ? ` | Fokotany: ${fokotany}` : ""}
+        ${commune ? ` | Commune: ${commune}` : ""}</small>
     `);
 	$("#selected_agent_info").removeClass("d-none");
 	$("#agent_search").val("");
