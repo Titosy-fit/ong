@@ -30,17 +30,22 @@
                                         <input name="adresse_modif" id="adresse_modif" type="text" class="form-control input_form-control" require>
                                     </div>
 
-                                    <div class="mb-1">
-                                        <label class="form-label">Numéro Télephone:</label>
-                                        <input name="numero_modif" id="numero_modif" type="tel" class="form-control input_form-control" required>
-                                        <p class="text-danger d-none" id="msg-num-modif">Ce numéro existe déjà</p>
-                                    </div>
+                                   <div class="mb-1">
+    <label class="form-label">Numéro Télephone:</label>
+    <input name="numero_modif" id="numero_modif" type="tel" class="form-control input_form-control" required>
+    <p class="text-danger d-none" id="msg-num-modif">Ce numéro existe déjà</p>
+</div>
 
+<!-- NOUVEAU CHAMP CIN DANS LE MODAL -->
+<div class="mb-1">
+    <label class="form-label">Numéro CIN :</label>
+    <input name="numero_cin_modif" id="numero_cin_modif" type="text" class="form-control input_form-control" required maxlength="20">
+    <p class="text-danger d-none" id="msg-cin-modif">Ce CIN existe déjà</p>
+</div>
                                     <div class="mb-2">
                                         <label class="form-label">Fonction :</label>
                                         <select name="poste" id="poste_modif" class="form-select">
                                         </select>
-                                </select>
 
                                         
                                     </div>
@@ -200,11 +205,18 @@
                             <label class="form-label">Email :</label>
                             <input name="email" id="email" type="email" class="form-control input_form-control " required>
                         </div>
-                        <div class="mb-2">
-                            <label class="form-label">Numéro Téléphone :</label>
-                            <input name="numero" id="numero" type="tel" class="form-control input_form-control" required>
-                            <p class="text-danger d-none" id="msg-numero">Ce numéro existe déjà</p>
-                        </div>
+                       <div class="mb-2">
+    <label class="form-label">Numéro Téléphone :</label>
+    <input name="numero" id="numero" type="tel" class="form-control input_form-control" required>
+    <p class="text-danger d-none" id="msg-numero">Ce numéro existe déjà</p>
+</div>
+
+<!-- NOUVEAU CHAMP CIN -->
+<div class="mb-2">
+    <label class="form-label">Numéro CIN :</label>
+    <input name="numero_cin" id="numero_cin" type="text" class="form-control input_form-control" required maxlength="20">
+    <p class="text-danger d-none" id="msg-cin">Ce CIN existe déjà</p>
+</div>
                         <div class="_boutton">
                             <?php if (isset($_SESSION['let_test']) && !$_SESSION['let_test']) :  ?>
                                 <button type="button" class="btn btn-info" disabled>

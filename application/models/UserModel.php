@@ -10,12 +10,9 @@ class UserModel extends CI_Model
 
     public function get_count()
     {
-        $query = $this->db->select('*')
+        $query = $this->db->select('user.idUser')
             ->from('user')
-            ->join('pointvente', 'pointvente.idPointVente = user.idPointVente', 'inner')
-            ->order_by('idUser', 'desc')
             ->where('user.idadmin', $_SESSION['idadmin'])
-            ->where('pointvente.idadmin', $_SESSION['idadmin'])
             ->get()->result();
 
         return count($query);
@@ -44,21 +41,36 @@ class UserModel extends CI_Model
 
     //     return $query->result();
     // }
+    // public function get_authors($limit, $start)
+    // {
+    //     $this->db->select('user.*, 
+    //                   projet.codeprojet, 
+    //                   projet.titreprojet, 
+    //                   poste.designation_poste')
+    //         ->from('user')
+    //         ->join('projet', 'projet.idprojet = user.idprojet', 'left')
+    //         ->join('poste', 'poste.idposte = user.idposte', 'inner')
+    //         ->where('user.idadmin', $_SESSION['idadmin'])
+    //         ->order_by('user.idUser', 'desc')
+    //         ->limit($limit, $start);
+
+    //     return $this->db->get()->result();
+    // }
     public function get_authors($limit, $start)
-    {
-        $this->db->select('user.*, 
+{
+    $this->db->select('user.*, 
                       projet.codeprojet, 
                       projet.titreprojet, 
                       poste.designation_poste')
-            ->from('user')
-            ->join('projet', 'projet.idprojet = user.idprojet', 'left')
-            ->join('poste', 'poste.idposte = user.idposte', 'inner')
-            ->where('user.idadmin', $_SESSION['idadmin'])
-            ->order_by('user.idUser', 'desc')
-            ->limit($limit, $start);
+        ->from('user')
+        ->join('projet', 'projet.idprojet = user.idprojet', 'left')
+        ->join('poste', 'poste.idposte = user.idposte', 'inner')
+        ->where('user.idadmin', $_SESSION['idadmin'])
+        ->order_by('user.idUser', 'desc')
+        ->limit($limit, $start);
 
-        return $this->db->get()->result();
-    }
+    return $this->db->get()->result();
+}
     public function insertUser($data)
     {
         $this->db->insert('user', $data);
@@ -139,9 +151,11 @@ class UserModel extends CI_Model
 
     public function getAllUserById($id)
     {
-        $query = $this->db->select('*')
+        $query = $this->db->select('user.*, poste.designation_poste, projet.codeprojet, projet.titreprojet')
             ->from('user')
-            ->where('idUser', $id)
+            ->join('poste', 'poste.idposte = user.idposte', 'left')
+            ->join('projet', 'projet.idprojet = user.idprojet', 'left')
+            ->where('user.idUser', $id)
             ->get();
         return $query->result();
     }
@@ -193,7 +207,14 @@ class UserModel extends CI_Model
             ->get();
         return $query->result();
     }
-
+public function verifCin($cin)
+{
+    $query = $this->db->select('*')
+        ->from('user')
+        ->where('numero_cin', $cin)
+        ->get();
+    return $query->result();
+}
     public function mdpUser($id, $data)
     {
         $this->db->where('idUser', $id);

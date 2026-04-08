@@ -70,10 +70,10 @@
                     <span class="icon"><i class="fas fa-share-alt"></i></span>
                     <span class="ms-1">Fiches de distributions</span>
                 </a>
-                <a href="<?= base_url('rendre-mat') ?>" class="sidebar-link <?= (basename($_SERVER['PHP_SELF']) == 'rendre-mat') ? 'active' : '' ?>">
+                <!-- <a href="<?= base_url('rendre-mat') ?>" class="sidebar-link <?= (basename($_SERVER['PHP_SELF']) == 'rendre-mat') ? 'active' : '' ?>">
                     <span class="icon"><i class="fas fa-undo"></i></span>
                     <span class="ms-1">Retours de matériels </span>
-                </a>
+                </a> -->
                 <a href="<?= base_url('listeemprunt') ?>" class="sidebar-link <?= (basename($_SERVER['PHP_SELF']) == 'listeemprunt') ? 'active' : '' ?>">
                     <span class="icon"><i class="fas fa-list"></i></span>
                     <span class="ms-1">Liste des emprunts</span>

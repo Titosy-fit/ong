@@ -69,6 +69,7 @@
                 <div class="onglet">
                         <a href="<?= base_url('demande-mat') ?>" id="panier_" class="onglet_btn ">Nouvel demande</a>
                         <a href="<?= base_url('liste-demande') ?>" class="onglet_btn active">Listes des demandes</a>
+                        <a href="<?= base_url('rendre-mat') ?>" class="onglet_btn ">Retour de matériels</a>
                     </div>
                 <form action="<?= base_url('liste-demande/search') ?>" method="post" class="mb-4 " id="searchform">
                     <!-- <div class="row"> -->

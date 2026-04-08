@@ -175,6 +175,7 @@ class User extends CI_Controller
         $adresse = trim(strip_tags($this->input->post('adresse', true)));
         $email  = trim(strip_tags($this->input->post('email', true)));
         $numero = trim(strip_tags($this->input->post('numero', true)));
+        $numero_cin = trim(strip_tags($this->input->post('numero_cin', true)));   // ← NOUVEAU
         $poste  = trim(strip_tags($this->input->post('poste', true)));
         $idprojet = trim($this->input->post('idprojet', true) ?? '');
         $roles  = trim($this->input->post('role', true) ?? '');
@@ -190,6 +191,7 @@ class User extends CI_Controller
         if (empty($prenom))  $errors[] = "Le prénom est obligatoire.";
         if (empty($email))   $errors[] = "L'email est obligatoire.";
         if (empty($numero))  $errors[] = "Le numéro est obligatoire.";
+        if (empty($numero_cin)) $errors[] = "Le numéro CIN est obligatoire.";   // ← NOUVEAU
         if (empty($poste))   $errors[] = "Veuillez sélectionner un poste.";
         if (empty($idprojet)) $errors[] = "Veuillez sélectionner un projet.";
 
@@ -203,7 +205,9 @@ class User extends CI_Controller
         if (count($numExists) > 0) {
             $errors[] = "Ce numéro existe déjà.";
         }
-
+if (count($this->user->verifCin($numero_cin)) > 0) {   // ← NOUVEAU
+        $errors[] = "Ce CIN existe déjà.";
+    }
         // ──────────────────────────────────────────────
         // S'il y a des erreurs → on redirige avec message
         // ──────────────────────────────────────────────
@@ -221,6 +225,7 @@ class User extends CI_Controller
             'nomUser'     => $nom,
             'prenomUser'  => $prenom,
             'contact'     => $numero,
+            'numero_cin'  => $numero_cin,          // ← NOUVEAU
             'adress'      => $adresse,
             'idposte'     => $poste,
             'mail'        => $email,
@@ -308,64 +313,73 @@ class User extends CI_Controller
     //     redirect('user') ;
     // }
     public function editUser()
-    {
-        $id     = strip_tags(trim($this->input->post('id_modif')));
-        $nom    = strip_tags(trim($this->input->post('nom_modif')));
-        $prenom = strip_tags(trim($this->input->post('prenom_modif')));
-        $adresse = strip_tags(trim($this->input->post('adresse_modif')));
-        $numero = strip_tags(trim($this->input->post('numero_modif')));
-        $poste  = strip_tags(trim($this->input->post('poste')));
-        $email  = strip_tags(trim($this->input->post('email_modif')));
-        $idprojet   = trim($this->input->post('idprojet_modif', true) ?? '');   // ← important : le nom du champ dans le modal
-        $idPv   = strip_tags(trim($this->input->post('idPv_modif')));
+{
+    $id         = strip_tags(trim($this->input->post('id_modif')));
+    $nom        = strip_tags(trim($this->input->post('nom_modif')));
+    $prenom     = strip_tags(trim($this->input->post('prenom_modif')));
+    $adresse    = strip_tags(trim($this->input->post('adresse_modif')));
+    $numero     = strip_tags(trim($this->input->post('numero_modif')));
+    $numero_cin = strip_tags(trim($this->input->post('numero_cin_modif')));   // ← NOUVEAU
+    $poste      = strip_tags(trim($this->input->post('poste')));
+    $email      = strip_tags(trim($this->input->post('email_modif')));
+    $idprojet   = trim($this->input->post('idprojet_modif', true) ?? '');
+    $roles      = trim($this->input->post('role_modif') ?? '');
 
-        // Récupération des rôles
-        $roles = trim($this->input->post('role_modif') ?? '');
+    $data = [
+        'nomUser'     => $nom,
+        'prenomUser'  => $prenom,
+        'contact'     => trim($numero),
+        'numero_cin'  => $numero_cin,          // ← NOUVEAU
+        'adress'      => $adresse,
+        'idposte'     => $poste,
+        'mail'        => $email,
+        'idprojet'    => $idprojet ?: null,
+        'roles'       => $roles
+    ];
 
-        $data = [
-            'nomUser'      => $nom,
-            'prenomUser'   => $prenom,
-            'contact'      => trim($numero),
-            'adress'       => $adresse,
-            'idposte'      => $poste,
-            'mail'         => $email,
-            'idPointVente' => $idPv,
-            'idprojet'    => $idprojet ?: null,
-
-            'roles'        => $roles                     // ← maintenant défini
-        ];
-
-        $this->user->updateUser($id, $data);
-        $this->session->set_flashdata('edit', 'Utilisateur modifié avec succès.');
-
-        redirect('user');
-    }
+    $this->user->updateUser($id, $data);
+    $this->session->set_flashdata('edit', 'Utilisateur modifié avec succès.');
+    redirect('user');
+}
 
     public function verifUser()
     {
-        $id = $this->input->post('id');
-        $numero = strip_tags(trim($this->input->post('numero')));
-        $email = strip_tags(trim($this->input->post('email')));
+        $id         = $this->input->post('id');
+        $numero     = strip_tags(trim($this->input->post('numero')));
+        $numero_cin = strip_tags(trim($this->input->post('numero_cin')));
+        $email      = strip_tags(trim($this->input->post('email')));
 
         $dataId = $this->user->verifyIfUserExiste($id);
 
-        $tab = [];
+        $tab     = [];
+        $tab_cin = [];
 
         for ($i = 0; $i < count($dataId); $i++) {
-            array_push($tab, $dataId[$i]->contact);
-            array_push($tab, $dataId[$i]->mail);
+            array_push($tab,     $dataId[$i]->contact);
+            array_push($tab,     $dataId[$i]->mail);
+            // Remplir $tab_cin avec les CIN des autres utilisateurs
+            if (!empty($dataId[$i]->numero_cin)) {
+                array_push($tab_cin, $dataId[$i]->numero_cin);
+            }
         }
 
         $response = ['success' => true];
+
         if (in_array($numero, $tab)) {
             $response['numExiste'] = true;
-            $response['success'] = false;
+            $response['success']   = false;
+        }
+
+        if (!empty($numero_cin) && in_array($numero_cin, $tab_cin)) {
+            $response['cinExiste'] = true;
+            $response['success']   = false;
         }
 
         if (in_array($email, $tab)) {
             $response['mailExiste'] = true;
-            $response['success'] = false;
+            $response['success']    = false;
         }
+
         echo json_encode($response);
     }
 
@@ -405,14 +419,17 @@ class User extends CI_Controller
             $data['css'] = 'stock.css';
             $js['js'] = 'user.js';
 
+            $this->load->model('ProjetModel', 'projet');
+            $projets = $this->projet->getAllForSelect();
+
             $this->load->view('templates/header', $data);
             $this->load->view('templates/sidebar', ['user' => true]);
             $this->load->view('templates/tete');
             $this->load->view('user', [
-                'data' => $datapag,
-                'post' => $_POST['post'],
-                'pv' => $this->dispatch->getAllVente(),
-                'postes' => $this->postes
+                'data'    => $datapag,
+                'post'    => $_POST['post'],
+                'projets' => $projets,
+                'postes'  => $this->postes
             ]);
             $this->load->view('templates/footer', $js);
         } else {

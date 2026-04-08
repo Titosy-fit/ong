@@ -323,6 +323,83 @@ function reinitialize(elem) {
 // }
 
 
+// function DonnerUser(elem) {
+//     const id = elem.getAttribute("data-id");
+
+//     $.ajax({
+//         url: base_url("DonnerUser"),
+//         type: "POST",
+//         data: { id: id },
+//         dataType: "json",
+//     })
+//         .done(function (response) {
+//             if (response.success) {
+//                 const data = response.data;       // ← maintenant c'est l'objet direct (pas data[0])
+//                 const projets = response.projets;    // ← liste des projets (remplace pv)
+//                 const postes = response.postes;
+
+//                 // Champs texte
+//                 $("#id-User").val(data.idUser || '');
+//                 $("#nom_modif").val(data.nomUser || '');
+//                 $("#prenom_modif").val(data.prenomUser || '');
+//                 $("#numero_modif").val(data.contact || '');
+//                 $("#adresse_modif").val(data.adress || '');
+//                 $("#email_modif").val(data.mail || '');
+
+//                 // Rôles (checkboxes) → inchangé
+//                 if (data.roles) {
+//                     let rolesArray = [];
+//                     if (Array.isArray(data.roles)) {
+//                         rolesArray = data.roles;
+//                     } else if (typeof data.roles === 'string') {
+//                         rolesArray = data.roles.split(',').map(role => role.trim());
+//                     }
+
+//                     $('.role-checkbox-modif').each(function () {
+//                         const roleValue = $(this).val();
+//                         $(this).prop('checked', rolesArray.includes(roleValue));
+//                     });
+
+//                     updateHiddenRoleModif();
+//                 } else {
+//                     $('.role-checkbox-modif').prop('checked', false);
+//                     $("#hidden_role_modif").val("");
+//                 }
+
+//                 // Poste → simplifié (une seule boucle)
+//                 let posteHtml = '';
+//                 postes.forEach(poste => {
+//                     const selected = (poste.idposte == data.idposte) ? ' selected' : '';
+//                     posteHtml += `<option value="${poste.idposte}"${selected}>${poste.designation_poste}</option>`;
+//                 });
+//                 $("#poste_modif").html(posteHtml);
+
+//                 // Projet → remplace l'ancien code pv
+//                 let projetHtml = '<option value="">-- Sélectionner un projet --</option>';
+
+//                 if (projets && projets.length > 0) {
+//                     projets.forEach(projet => {
+//                         const selected = (projet.idprojet == data.idprojet) ? ' selected' : '';
+//                         let label = projet.codeprojet || '—';
+//                         if (projet.titreprojet) {
+//                             label += ` — ${projet.titreprojet}`;
+//                         }
+//                         projetHtml += `<option value="${projet.idprojet}"${selected}>${label}</option>`;
+//                     });
+//                 } else {
+//                     projetHtml += '<option value="" disabled>Aucun projet disponible</option>';
+//                 }
+
+//                 $("#projetModif").html(projetHtml);
+//             } else {
+//                 Myalert.erreur("Impossible de charger les informations de l'utilisateur.");
+//             }
+//         })
+//         .fail(function (errorMessage) {
+//             console.log("Erreur AJAX DonnerUser :", errorMessage);
+//             Myalert.erreur("Erreur de connexion au serveur.");
+//         });
+// }
 function DonnerUser(elem) {
     const id = elem.getAttribute("data-id");
 
@@ -334,8 +411,8 @@ function DonnerUser(elem) {
     })
         .done(function (response) {
             if (response.success) {
-                const data = response.data;       // ← maintenant c'est l'objet direct (pas data[0])
-                const projets = response.projets;    // ← liste des projets (remplace pv)
+                const data = response.data;
+                const projets = response.projets;
                 const postes = response.postes;
 
                 // Champs texte
@@ -343,10 +420,14 @@ function DonnerUser(elem) {
                 $("#nom_modif").val(data.nomUser || '');
                 $("#prenom_modif").val(data.prenomUser || '');
                 $("#numero_modif").val(data.contact || '');
+
+                // ← NOUVEAU : Champ CIN
+                $("#numero_cin_modif").val(data.numero_cin || '');
+
                 $("#adresse_modif").val(data.adress || '');
                 $("#email_modif").val(data.mail || '');
 
-                // Rôles (checkboxes) → inchangé
+                // Rôles (checkboxes)
                 if (data.roles) {
                     let rolesArray = [];
                     if (Array.isArray(data.roles)) {
@@ -366,7 +447,7 @@ function DonnerUser(elem) {
                     $("#hidden_role_modif").val("");
                 }
 
-                // Poste → simplifié (une seule boucle)
+                // Poste
                 let posteHtml = '';
                 postes.forEach(poste => {
                     const selected = (poste.idposte == data.idposte) ? ' selected' : '';
@@ -374,22 +455,16 @@ function DonnerUser(elem) {
                 });
                 $("#poste_modif").html(posteHtml);
 
-                // Projet → remplace l'ancien code pv
+                // Projet
                 let projetHtml = '<option value="">-- Sélectionner un projet --</option>';
-
                 if (projets && projets.length > 0) {
                     projets.forEach(projet => {
                         const selected = (projet.idprojet == data.idprojet) ? ' selected' : '';
                         let label = projet.codeprojet || '—';
-                        if (projet.titreprojet) {
-                            label += ` — ${projet.titreprojet}`;
-                        }
+                        if (projet.titreprojet) label += ` — ${projet.titreprojet}`;
                         projetHtml += `<option value="${projet.idprojet}"${selected}>${label}</option>`;
                     });
-                } else {
-                    projetHtml += '<option value="" disabled>Aucun projet disponible</option>';
                 }
-
                 $("#projetModif").html(projetHtml);
             } else {
                 Myalert.erreur("Impossible de charger les informations de l'utilisateur.");
@@ -439,7 +514,7 @@ $(document).on('change', '.role-checkbox-modif', function () {
 });
 
 $(document.body).on("click", "#modifier", function () {
-    // Mettre à jour les rôles avant de vérifier
+    // Mettre à jour les rôles avant vérification
     updateHiddenRoleModif();
 
     $.ajax({
@@ -448,6 +523,7 @@ $(document.body).on("click", "#modifier", function () {
         dataType: "json",
         data: {
             numero: $("#numero_modif").val(),
+            numero_cin: $("#numero_cin_modif").val(),   // ← NOUVEAU
             email: $("#email_modif").val(),
             id: $("#id-User").val(),
         },
@@ -455,25 +531,35 @@ $(document.body).on("click", "#modifier", function () {
         if (data.success) {
             $("#modification").click();
         } else {
+            // Numéro téléphone
             if (data.numExiste) {
                 $("#numero_modif").css("border", "1px solid red");
                 $("#msg-num-modif").removeClass("d-none");
-                $("#msg-mail-modif").addClass("d-none");
             } else {
                 $("#numero_modif").css("border", "");
+                $("#msg-num-modif").addClass("d-none");
             }
 
+            // ← NOUVEAU : CIN
+            if (data.cinExiste) {
+                $("#numero_cin_modif").css("border", "1px solid red");
+                $("#msg-cin-modif").removeClass("d-none");
+            } else {
+                $("#numero_cin_modif").css("border", "");
+                $("#msg-cin-modif").addClass("d-none");
+            }
+
+            // Email
             if (data.mailExiste) {
                 $("#email_modif").css("border", "1px solid red");
                 $("#msg-mail-modif").removeClass("d-none");
-                $("#msg-num-modif").addClass("d-none");
             } else {
                 $("#email_modif").css("border", "");
+                $("#msg-mail-modif").addClass("d-none");
             }
-
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
-        console.error("Erreur lors de la vérification de l'existence de l'agent :", textStatus, errorThrown);
+        console.error("Erreur lors de la vérification :", textStatus, errorThrown);
     });
 });
 

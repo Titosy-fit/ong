@@ -132,6 +132,7 @@
                     <div class="onglet">
                         <a href="<?= base_url('demande-mat') ?>" id="panier_" class="onglet_btn active">Nouvel demande</a>
                         <a href="<?= base_url('liste-demande') ?>" class="onglet_btn">Liste des demandes</a>
+                        <a href="<?= base_url('rendre-mat') ?>" class="onglet_btn">Retour de matériels</a>
                     </div>
                     <div class="mb-2" id="denomination_pv">
                         <div class="row">
@@ -213,6 +214,44 @@
 
                         </select>
                     </div>
+                    <!-- NOUVEAU CHAMP : SELECTIONNER UN AGENT AVEC DATALIST -->
+<div class="mb-2">
+    <div class="row">
+        <div class="col-12">
+            <label class="form-label">Agent :</label>
+            <input type="text" class="form-control" id="agent_search" list="agent_list" placeholder="Rechercher un agent..." autocomplete="off">
+            <datalist id="agent_list">
+                <?php if (isset($agents) && count($agents) > 0): ?>
+                    <?php for ($i = 0; $i < count($agents); $i++) : ?>
+                        <option value="<?= htmlspecialchars($agents[$i]->nomUser . ' ' . $agents[$i]->prenomUser) ?>" data-id="<?= $agents[$i]->idUser ?>">
+                    <?php endfor; ?>
+                <?php endif; ?>
+            </datalist>
+            <input type="hidden" id="agent_selected" name="agent_id" value="">
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Créer un mapping nom -> id
+    var agentMap = {};
+    <?php if (isset($agents) && count($agents) > 0): ?>
+        <?php for ($i = 0; $i < count($agents); $i++) : ?>
+            agentMap["<?= htmlspecialchars($agents[$i]->nomUser . ' ' . $agents[$i]->prenomUser) ?>"] = "<?= $agents[$i]->idUser ?>";
+        <?php endfor; ?>
+    <?php endif; ?>
+
+    $('#agent_search').on('change', function() {
+        var selectedName = $(this).val();
+        if (agentMap[selectedName]) {
+            $('#agent_selected').val(agentMap[selectedName]);
+        } else {
+            $('#agent_selected').val('');
+        }
+    });
+});
+</script>
 
                     <div class="_boutton">
                         <?php if (isset($_SESSION['let_test']) && !$_SESSION['let_test']) : ?>
