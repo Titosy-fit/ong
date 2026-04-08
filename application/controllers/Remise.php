@@ -153,13 +153,11 @@ class Remise extends CI_Controller
                 ];
 
                 $le_panier = $this->remise->getpanierbyid($panier[$i]);
-                $remise = $this->remise->getpanierremise( $panier[$i] ) ; 
                 if (count($le_panier)) {
-                    $qte = $min_qte ; 
-                    if ( count( $remise )){
-                        $qte += $remise[0]->min_qte ; 
-                    }
-                    if ($le_panier[0]->min_qte == $qte) {
+                    $sum_returned = $this->remise->get_sum_remise($panier[$i]);
+                    $total_retourne = $min_qte + ($sum_returned->min_qte ?? 0);
+
+                    if ($total_retourne >= $le_panier[0]->min_qte) {
                         $this->remise->return($panier[$i]);
                     }
                     $data_panier[] = $data;

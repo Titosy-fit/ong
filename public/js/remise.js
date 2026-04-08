@@ -110,60 +110,59 @@ $(document).on('change', '#num_demande', function () {
 				let content = ``;
 				for (let i = 0; i < datas.length; i++) {
 					const materiel = datas[i];
+					const uniteLabel = materiel.denomination ? materiel.denomination : 'unité(s)';
+					
 					content += `
-						<div class="row mb-2">
-							<div class="col">
-								<label for="" class="form-label">Reference :</label>
-								<input type="text" class="form-control" value='${materiel.refmateriel}' readonly >
-								<input type="hidden" class="form-control" name="materiel[${i}]" value='${materiel.idmateriel }'>
-								<input type="hidden" class="form-control" name="panier[${i}]" value='${materiel.idPanier }'>
-							</div>
-							<div class="col">
-								<label for="" class="form-label">Désignation :</label>
-								<input type="text" class="form-control" value='${materiel.designationmateriel}' readonly>
-								
-							</div>
-							<div class="col">
-								<label for="" class="form-label">Qte empunté :</label>
-								<input type="text" class="form-control d-none" name='idunite[${i}]' value='${materiel.idunite}' readonly>
-							` ;
-					if (materiel.idunite) {
-						content += `
-						<input type="text" class="form-control" value='${materiel.quantite} ${materiel.denomination}(s)'  readonly>
-							`
-					}
-					else {
-						content += `
-						<input type="text" class="form-control" value='${materiel.quantite}'  readonly>
-							`
-					}
-
-					content += `
-							</div>
-							<div class="col">
-								<label for="" class="form-label">Qte remise :</label>
-								`
-					if (i == 0) {
-						content += `
-									<input type="number" min='0' max='${materiel.quantite}' name="quantite[${i}]" id='focused' class="form-control" value='${materiel.quantite}'  required >`
-					}
-					else {
-						content += `
-									<input type="number" min='0' max='${materiel.quantite}' name="quantite[${i}]" class="form-control"  value='${materiel.quantite}'  required >`
-
-					}
-					content += `
+						<div class="card mb-3 shadow-sm border-info" style="border-left: 5px solid #0dcaf0;">
+							<div class="card-body">
+								<div class="row align-items-center">
+									<div class="col-md-3">
+										<p class="mb-1 text-muted small"><strong>Matériel</strong></p>
+										<div class="mb-0 text-dark" style="font-weight: 500;">${materiel.refmateriel}</div>
+										<div class="small text-muted text-truncate" title="${materiel.designationmateriel}">${materiel.designationmateriel}</div>
+										<input type="hidden" name="materiel[${i}]" value='${materiel.idmateriel}'>
+										<input type="hidden" name="panier[${i}]" value='${materiel.idPanier}'>
+										<input type="hidden" name="idunite[${i}]" value='${materiel.idunite}'>
+									</div>
+									<div class="col-md-2 text-center">
+										<p class="mb-1 text-muted small">Initial</p>
+										<span class="badge bg-secondary">${materiel.quantite} ${uniteLabel}</span>
+									</div>
+									<div class="col-md-2 text-center">
+										<p class="mb-1 text-muted small">Déjà rendu</p>
+										<span class="badge bg-light text-dark border">${materiel.qte_retournee_min} (unités base)</span>
+									</div>
+									<div class="col-md-2 text-center text-primary">
+										<p class="mb-1 text-muted small">Reste à rendre</p>
+										<strong class="h5 mb-0">${materiel.qte_restante_min}</strong>
+									</div>
+									<div class="col-md-3">
+										<label class="form-label mb-1 text-muted small">Qte à rendre maintenant</label>
+										<div class="input-group">
+											<input type="number" min='0' max='${materiel.qte_restante_min}' 
+												name="quantite[${i}]" 
+												class="form-control return-input" 
+												data-index="${i}"
+												style="border-color: #0dcaf0; font-weight: bold;"
+												value='${materiel.qte_restante_min}' 
+												required >
+											<span class="input-group-text bg-info text-white">${uniteLabel}</span>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
-					`
+					`;
 				}
-				$('#remise_container').removeClass('d-none') ; 
+				$('#remise_container').removeClass('d-none');
 				$('#remise_container').html(content);
-
-				$('#focused').focus();
+				
+				// Focus sur le premier input
+				$('.return-input').first().focus();
 			} else {
 				vider() ; 
-				Myalert.erreur('Ce numero de demande n\'existe pas. ')
+				const msg = response.message ? response.message : 'Ce numero de demande n\'existe pas. ';
+				Myalert.erreur(msg);
 			}
 		});
 	}

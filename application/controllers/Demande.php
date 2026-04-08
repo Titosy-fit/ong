@@ -124,21 +124,35 @@ class Demande extends CI_Controller
         }
 
         $datas = $this->demande->getByfact($facture);
+        
+        $has_to_return = false;
         foreach ($datas as $key => $data) {
-            $returned = $this->remise->getpanierremise( $data->idPanier ) ;
-            if ( count( $returned )) {
-                $datas[ $key ]->quantite -= $returned[0]->quantite_remise ; 
+            $sum_returned = $this->remise->get_sum_remise($data->idPanier);
+            $datas[$key]->qte_retournee_min = $sum_returned->min_qte ?? 0;
+            $datas[$key]->qte_initiale_min = $data->min_qte;
+            $datas[$key]->qte_restante_min = $data->min_qte - $datas[$key]->qte_retournee_min;
+            
+            if ($datas[$key]->qte_restante_min > 0) {
+                $has_to_return = true;
             }
         }
+
         if (count($datas)) {
-            echo json_encode([
-                'success' => true,
-                'datas' => $datas
-            ]);
+            if ($has_to_return) {
+                echo json_encode([
+                    'success' => true,
+                    'datas' => $datas
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => "Cette demande a déjà été entièrement retournée."
+                ]);
+            }
         } else {
             echo json_encode([
                 'success' => false,
-                'datas' => $datas
+                'message' => "Ce numéro de demande n'existe pas."
             ]);
         }
     }

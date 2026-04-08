@@ -239,16 +239,14 @@ class RemiseModel extends CI_Model
         $this->db->insert('depense', $data);
     }
 
-    public function getpanierremise( $idpanier = ''){
-        $demandes =  $this->db->select('*')
-                ->from('rempanier')
-                ->where('rempanier.idPanier' , $idpanier )
-                ->where('rempanier.idadmin' , $_SESSION['idadmin'])
-                ->get()->result() ; 
-        return $demandes  ; 
+    public function get_sum_remise($idpanier)
+    {
+        return $this->db->select_sum('min_qte')
+            ->from('rempanier')
+            ->where('idPanier', $idpanier)
+            ->where('idadmin', $_SESSION['idadmin'])
+            ->get()->row();
     }
-
-
 
 
     // ********************** Utile ************************* // 
