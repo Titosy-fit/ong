@@ -18,30 +18,40 @@
                                         <input type="hidden" name="id_modif" id="id-User">
                                         <input type="hidden" name="role_modif" id="hidden_role_modif" value="">
                                         <label class="form-label">Nom :</label>
-                                        <input type="text" id="nom_modif" class="form-control" name="nom_modif" require>
+                                        <input type="text" id="nom_modif" class="form-control" name="nom_modif" required>
                                     </div>
                                     <div class="mb-1">
                                         <label class="form-label">Prénom :</label>
-                                        <input name="prenom_modif" id="prenom_modif" type="text" class="form-control input_form-control" require>
+                                        <input name="prenom_modif" id="prenom_modif" type="text" class="form-control input_form-control" required>
                                     </div>
 
                                     <div class="mb-1">
                                         <label class="form-label">Adresse :</label>
-                                        <input name="adresse_modif" id="adresse_modif" type="text" class="form-control input_form-control" require>
+                                        <input name="adresse_modif" id="adresse_modif" type="text" class="form-control input_form-control" required>
                                     </div>
 
-                                   <div class="mb-1">
-    <label class="form-label">Numéro Télephone:</label>
-    <input name="numero_modif" id="numero_modif" type="tel" class="form-control input_form-control" required>
-    <p class="text-danger d-none" id="msg-num-modif">Ce numéro existe déjà</p>
-</div>
+                                    <div class="mb-1">
+                                        <label class="form-label">Commune :</label>
+                                        <input name="commune_modif" id="commune_modif" type="text" class="form-control input_form-control" required>
+                                    </div>
 
-<!-- NOUVEAU CHAMP CIN DANS LE MODAL -->
-<div class="mb-1">
-    <label class="form-label">Numéro CIN :</label>
-    <input name="numero_cin_modif" id="numero_cin_modif" type="text" class="form-control input_form-control" required maxlength="20">
-    <p class="text-danger d-none" id="msg-cin-modif">Ce CIN existe déjà</p>
-</div>
+                                    <div class="mb-1">
+                                        <label class="form-label">Fokotany :</label>
+                                        <input name="fokotany_modif" id="fokotany_modif" type="text" class="form-control input_form-control" required>
+                                    </div>
+
+                                    <div class="mb-1">
+                                        <label class="form-label">Numéro Téléphone:</label>
+                                        <input name="numero_modif" id="numero_modif" type="tel" class="form-control input_form-control" required>
+                                        <p class="text-danger d-none" id="msg-num-modif">Ce numéro existe déjà</p>
+                                    </div>
+
+                                    <div class="mb-1">
+                                        <label class="form-label">Numéro CIN :</label>
+                                        <input name="numero_cin_modif" id="numero_cin_modif" type="text" class="form-control input_form-control" required maxlength="20">
+                                        <p class="text-danger d-none" id="msg-cin-modif">Ce CIN existe déjà</p>
+                                    </div>
+
                                     <div class="mb-2">
                                         <label class="form-label">Fonction :</label>
                                         <select name="poste" id="poste_modif" class="form-select">
@@ -138,6 +148,14 @@
                         <div class="mb-2">
                             <label class="form-label">Adresse :</label>
                             <input name="adresse" id="adresse" type="text" class="form-control input_form-control " required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Commune :</label>
+                            <input name="commune" id="commune" type="text" class="form-control input_form-control " required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Fokotany :</label>
+                            <input name="fokotany" id="fokotany" type="text" class="form-control input_form-control " required>
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Poste :</label>
@@ -286,6 +304,8 @@
                                         <th>Nom</th>
                                         <th>Prénom</th>
                                         <th>Adresse</th>
+                                        <th>Commune</th>
+                                        <th>Fokotany</th>
                                         <th>Poste</th>
                                         <th>Email</th>
                                         <th>Projet </th>
@@ -304,7 +324,8 @@
                                             <td><?= $user[$i]->prenomUser ?></td>
 
                                             <td><?= $user[$i]->adress ?></td>
-
+                                            <td><?= $user[$i]->commune ?></td>
+                                            <td><?= $user[$i]->fokotany ?></td>
                                             <td><?= $user[$i]->designation_poste ?></td>
 
                                             <td><?= $user[$i]->mail ?></td>

@@ -178,13 +178,17 @@ class UserModel extends CI_Model
         $this->db->where('pointvente.idadmin', $_SESSION['idadmin']);
 
         if ($mot != '') {
-            $this->db->where('user.nomUser like', $mot);
-            $this->db->or_where('user.prenomUser like', $mot);
-            $this->db->or_where('user.contact like', $mot);
-            $this->db->or_where('user.adress like', $mot);
-            $this->db->or_where('poste.designation_poste like', $mot);
-            $this->db->or_where('user.mail like', $mot);
-            $this->db->or_where('pointvente.adressPv like', $mot);
+            $this->db->group_start();
+            $this->db->like('user.nomUser', $mot);
+            $this->db->or_like('user.prenomUser', $mot);
+            $this->db->or_like('user.contact', $mot);
+            $this->db->or_like('user.adress', $mot);
+            $this->db->or_like('user.commune', $mot);
+            $this->db->or_like('user.fokotany', $mot);
+            $this->db->or_like('poste.designation_poste', $mot);
+            $this->db->or_like('user.mail', $mot);
+            $this->db->or_like('pointvente.adressPv', $mot);
+            $this->db->group_end();
         }
 
         // if ( $type !=''){

@@ -175,7 +175,9 @@ class User extends CI_Controller
         $adresse = trim(strip_tags($this->input->post('adresse', true)));
         $email  = trim(strip_tags($this->input->post('email', true)));
         $numero = trim(strip_tags($this->input->post('numero', true)));
-        $numero_cin = trim(strip_tags($this->input->post('numero_cin', true)));   // ← NOUVEAU
+        $numero_cin = trim(strip_tags($this->input->post('numero_cin', true)));
+        $commune  = trim(strip_tags($this->input->post('commune', true)));
+    $fokotany = trim(strip_tags($this->input->post('fokotany', true)));   // ← NOUVEAU
         $poste  = trim(strip_tags($this->input->post('poste', true)));
         $idprojet = trim($this->input->post('idprojet', true) ?? '');
         $roles  = trim($this->input->post('role', true) ?? '');
@@ -191,7 +193,9 @@ class User extends CI_Controller
         if (empty($prenom))  $errors[] = "Le prénom est obligatoire.";
         if (empty($email))   $errors[] = "L'email est obligatoire.";
         if (empty($numero))  $errors[] = "Le numéro est obligatoire.";
-        if (empty($numero_cin)) $errors[] = "Le numéro CIN est obligatoire.";   // ← NOUVEAU
+        if (empty($numero_cin)) $errors[] = "Le numéro CIN est obligatoire."; 
+        if (empty($commune))  $errors[] = "La commune est obligatoire.";
+    if (empty($fokotany)) $errors[] = "Le fokotany est obligatoire.";  // ← NOUVEAU
         if (empty($poste))   $errors[] = "Veuillez sélectionner un poste.";
         if (empty($idprojet)) $errors[] = "Veuillez sélectionner un projet.";
 
@@ -227,6 +231,8 @@ if (count($this->user->verifCin($numero_cin)) > 0) {   // ← NOUVEAU
             'contact'     => $numero,
             'numero_cin'  => $numero_cin,          // ← NOUVEAU
             'adress'      => $adresse,
+            'commune'     => $commune,      // ← NOUVEAU
+        'fokotany'    => $fokotany,
             'idposte'     => $poste,
             'mail'        => $email,
             'idprojet'    => $idprojet,
@@ -318,6 +324,8 @@ if (count($this->user->verifCin($numero_cin)) > 0) {   // ← NOUVEAU
     $nom        = strip_tags(trim($this->input->post('nom_modif')));
     $prenom     = strip_tags(trim($this->input->post('prenom_modif')));
     $adresse    = strip_tags(trim($this->input->post('adresse_modif')));
+    $commune    = strip_tags(trim($this->input->post('commune_modif')));
+    $fokotany   = strip_tags(trim($this->input->post('fokotany_modif')));
     $numero     = strip_tags(trim($this->input->post('numero_modif')));
     $numero_cin = strip_tags(trim($this->input->post('numero_cin_modif')));   // ← NOUVEAU
     $poste      = strip_tags(trim($this->input->post('poste')));
@@ -331,6 +339,8 @@ if (count($this->user->verifCin($numero_cin)) > 0) {   // ← NOUVEAU
         'contact'     => trim($numero),
         'numero_cin'  => $numero_cin,          // ← NOUVEAU
         'adress'      => $adresse,
+        'commune'     => $commune,        // ← NOUVEAU
+        'fokotany'    => $fokotany,
         'idposte'     => $poste,
         'mail'        => $email,
         'idprojet'    => $idprojet ?: null,
@@ -494,16 +504,19 @@ if (count($this->user->verifCin($numero_cin)) > 0) {   // ← NOUVEAU
 {
     $recherche = trim($this->input->post('recherche') ?? '');
 
-    $this->db->select('idUser, nomUser, prenomUser, adress, contact, mail, numero_cin');
+    $this->db->select('idUser, nomUser, prenomUser, adress, commune, fokotany, contact, mail, numero_cin');
     $this->db->from('user');
     $this->db->where('user.idadmin', $_SESSION['idadmin']);
 
     if (!empty($recherche)) {
         $this->db->group_start();
-        $this->db->like('nomUser', $recherche, 'both');
+        $this->db->like('nomUser',    $recherche, 'both');
         $this->db->or_like('prenomUser', $recherche, 'both');
-        $this->db->or_like('contact', $recherche, 'both');
-        $this->db->or_like('mail', $recherche, 'both');
+        $this->db->or_like('adress',     $recherche, 'both');
+        $this->db->or_like('commune',    $recherche, 'both');
+        $this->db->or_like('fokotany',   $recherche, 'both');
+        $this->db->or_like('contact',    $recherche, 'both');
+        $this->db->or_like('mail',       $recherche, 'both');
         $this->db->or_like('numero_cin', $recherche, 'both');
         $this->db->group_end();
     }
