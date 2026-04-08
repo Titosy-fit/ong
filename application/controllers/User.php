@@ -455,37 +455,66 @@ if (count($this->user->verifCin($numero_cin)) > 0) {   // ← NOUVEAU
     }
 
 
+    // public function search_json()
+    // {
+    //     $recherche = $this->input->post('recherche');
+
+    //     $this->db->select('user.*, poste.designation_poste');
+    //     $this->db->from('user');
+    //     $this->db->join('poste', 'poste.idposte = user.idposte', 'left');
+    //     $this->db->where('user.idadmin', $_SESSION['idadmin']);
+
+    //     if (!empty($recherche)) {
+    //         $this->db->group_start();
+    //         $this->db->like('nomUser',    $recherche, 'both');
+    //         $this->db->or_like('prenomUser', $recherche, 'both');
+    //         $this->db->or_like('contact',    $recherche, 'both');
+    //         $this->db->or_like('mail',       $recherche, 'both');
+    //         $this->db->or_like('numero_cin', $recherche, 'both');
+    //         $this->db->group_end();
+    //     }
+
+    //     $this->db->order_by('nomUser', 'asc');
+    //     $datas = $this->db->get()->result();
+
+    //     if (count($datas)) {
+    //         echo json_encode([
+    //             'success' => true,
+    //             'datas'   => $datas
+    //         ]);
+    //     } else {
+    //         echo json_encode([
+    //             'success' => false,
+    //             'datas'   => []
+    //         ]);
+    //     }
+    // }
+
     public function search_json()
-    {
-        $recherche = $this->input->post('recherche');
+{
+    $recherche = trim($this->input->post('recherche') ?? '');
 
-        $this->db->select('*');
-        $this->db->from('user');
+    $this->db->select('idUser, nomUser, prenomUser, adress, contact, mail, numero_cin');
+    $this->db->from('user');
+    $this->db->where('user.idadmin', $_SESSION['idadmin']);
 
-        if (!empty($recherche)) {
-            $this->db->group_start();
-            $this->db->like('nomUser', $recherche, 'both');
-            $this->db->or_like('prenomUser', $recherche, 'both');
-            $this->db->or_like('contact', $recherche, 'both');
-            $this->db->or_like('mail', $recherche, 'both');
-            $this->db->group_end();
-        }
-
-        $datas = $this->db->get()->result();
-
-        if (count($datas)) {
-            echo json_encode([
-                'success' => true,
-                'datas' => $datas
-            ]);
-        } else {
-            echo json_encode([
-                'success' => false,
-                'datas' => []
-            ]);
-        }
+    if (!empty($recherche)) {
+        $this->db->group_start();
+        $this->db->like('nomUser', $recherche, 'both');
+        $this->db->or_like('prenomUser', $recherche, 'both');
+        $this->db->or_like('contact', $recherche, 'both');
+        $this->db->or_like('mail', $recherche, 'both');
+        $this->db->or_like('numero_cin', $recherche, 'both');
+        $this->db->group_end();
     }
 
+    $datas = $this->db->get()->result();
+
+    echo json_encode([
+        'success' => count($datas) > 0,
+        'datas'   => $datas
+    ]);
+}
     public function admin_inscription()
     {
         $this->load->view('admin_inscription');

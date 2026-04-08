@@ -791,7 +791,7 @@ $(document).on('click', '#annuler , #annuler_beneficiaire', function () {
 /**
  * retourner vers le modal
  */
-$( document ).on('click' , '#retour_vers_modal' , function (){
+$(document).on('click', '#retour_vers_modal', function () {
     $('#validation').html(panier_modal_content());
     $('.modal-footer').removeClass('d-none');
 })
@@ -846,7 +846,7 @@ $(document.body).on("click", "#sendvalidation", function () {
             data: {
                 idUser: iduser,
                 id_pointdevente: id_pointdevente,
-                idprojet : projet
+                idprojet: projet
             },
             dataType: "json",
         }).done(function (facturation) {
@@ -887,14 +887,14 @@ $(document.body).on("click", "#sendvalidation", function () {
                 $('#validerPanier').click();
                 $('#validation').html('');
                 $('#tableau').html(append_tableau());
-                Myalert.added() ; 
+                Myalert.added();
             }).fail(function () {
                 console.error('Erreur sur la validation de la vente !!');
                 window.location.reload();
             });
         });
     } else {
-        
+
         Myalert.erreur('Veuillez choisir un agent')
     }
 });
@@ -923,6 +923,179 @@ $(document).on('change', '#format', function () {
     }, 5000)
 })
 
+// ====================== AUTOCOMPLETE LIVE AGENT ======================
+let agentSearchTimeout = null;
 
+$(document).on('keyup', '#agent_search', function () {
+    const query = $(this).val().trim();
+    const $datalist = $('#agent_list');
 
+    clearTimeout(agentSearchTimeout);
+
+    if (query.length < 2) {
+        $datalist.html('');
+        $('#agent_selected').val('');
+        $('#agent_info').html('');
+        return;
+    }
+
+    agentSearchTimeout = setTimeout(() => {
+        $.ajax({
+            url: base_url('User/search_json'),
+            type: "POST",
+            data: { recherche: query },
+            dataType: 'json'
+        }).done(function (response) {
+            $datalist.html('');
+
+            if (response.success && response.datas.length > 0) {
+                response.datas.forEach(user => {
+                    const fullName = `${user.nomUser} ${user.prenomUser}`;
+                    const displayText = `${fullName} | Tél: ${user.contact} | CIN: ${user.numero_cin || '—'}`;
+
+                    const $option = $(`<option value="${fullName}" 
+                        data-id="${user.idUser}" 
+                        data-tel="${user.contact}" 
+                        data-cin="${user.numero_cin || ''}" 
+                        data-nom="${user.nomUser}" 
+                        data-prenom="${user.prenomUser}">
+                    `);
+                    $datalist.append($option);
+                });
+            }
+        });
+    }, 350);
+});
+
+// Quand l'utilisateur sélectionne un agent dans la datalist
+$(document).on('change', '#agent_search', function () {
+    const selectedValue = $(this).val();
+    const options = document.getElementById('agent_list').options;
+
+    $('#agent_selected').val('');
+    $('#agent_info').html('');
+
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].value === selectedValue) {
+            const id = options[i].getAttribute('data-id');
+            const tel = options[i].getAttribute('data-tel');
+            const cin = options[i].getAttribute('data-cin');
+            const nom = options[i].getAttribute('data-nom');
+            const prenom = options[i].getAttribute('data-prenom');
+
+            $('#agent_selected').val(id);
+
+            $('#agent_info').html(`
+                <span class="text-success fw-bold">✅ ${nom} ${prenom}</span><br>
+                <small>Téléphone : ${tel} | CIN : ${cin || '—'}</small>
+            `);
+            break;
+        }
+    }
+});
+// ====================== RECHERCHE AGENT INLINE (EXACTEMENT COMME MISSION) ======================
+// ====================== ESCAPE HTML (nécessaire pour la sécurité) ======================
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, function (match) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[match];
+    });
+}
+
+// ====================== RECHERCHE AGENT INLINE (comme Mission) ======================
+function searchAgentsInline(recherche) {
+    if (recherche.length < 1) {
+        $("#agent_results").hide().empty();
+        return;
+    }
+
+    $.ajax({
+        url: base_url("User/search_json"),
+        type: "post",
+        data: { recherche: recherche, type: "Agent" },
+        dataType: "json",
+        beforeSend: function () {
+            $("#agent_results")
+                .html('<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Chargement...</div>')
+                .show();
+        }
+    })
+        .done(function (response) {
+            if (response.success && response.datas.length > 0) {
+                let html = '<div style="max-height: 300px; overflow-y: auto;">';
+                response.datas.forEach(agent => {
+                    html += `
+                <div class="agent-result-item p-3 border-bottom" 
+                     data-id="${agent.idUser}" 
+                     data-nom="${escapeHtml(agent.nomUser)}" 
+                     data-prenom="${escapeHtml(agent.prenomUser)}" 
+                     data-contact="${agent.contact}" 
+                     data-cin="${agent.numero_cin || ''}">
+                    <div><i class="fa-solid fa-user-circle text-info"></i> 
+                         <strong>${escapeHtml(agent.nomUser)}</strong> ${escapeHtml(agent.prenomUser)}
+                    </div>
+                    <small class="text-muted">
+                        <i class="fa-solid fa-phone"></i> ${agent.contact}
+                        ${agent.numero_cin ? ` | <i class="fa-solid fa-id-card"></i> ${agent.numero_cin}` : ''}
+                    </small>
+                </div>`;
+                });
+                html += "</div>";
+                $("#agent_results").html(html).show();
+            } else {
+                $("#agent_results")
+                    .html('<div class="text-center p-3 text-secondary"><i class="fa-solid fa-user-slash"></i> Aucun agent trouvé</div>')
+                    .show();
+            }
+        })
+        .fail(function () {
+            $("#agent_results")
+                .html('<div class="text-center p-3 text-danger">Erreur de connexion</div>')
+                .show();
+        });
+}
+
+// ====================== ÉVÉNEMENTS ======================
+$(document).on("click", "#btn_search_agent", function () {
+    let recherche = $("#agent_search").val().trim();
+    if (recherche.length >= 1) searchAgentsInline(recherche);
+    else Myalert.erreur("Veuillez saisir au moins 1 caractère");
+});
+
+$(document).on("keyup", "#agent_search", function () {
+    let recherche = $(this).val().trim();
+    if (recherche.length >= 1) searchAgentsInline(recherche);
+    else $("#agent_results").hide().empty();
+});
+
+$(document).on("click", ".agent-result-item", function () {
+    const id = $(this).data("id");
+    const nom = $(this).data("nom");
+    const prenom = $(this).data("prenom");
+    const contact = $(this).data("contact");
+    const cin = $(this).data("cin");
+
+    $("#idagent").val(id);
+    $("#selected_agent_name").html(`
+        <strong>${nom} ${prenom}</strong><br>
+        <small><i class="fa-solid fa-phone"></i> ${contact}
+        ${cin ? ` | <i class="fa-solid fa-id-card"></i> ${cin}` : ''}</small>
+    `);
+    $("#selected_agent_info").removeClass("d-none");
+    $("#agent_search").val("");
+    $("#agent_results").hide();
+});
+
+$(document).on("click", "#clear_agent", function () {
+    $("#idagent").val("");
+    $("#selected_agent_info").addClass("d-none");
+    $("#agent_search").val("");
+    $("#agent_results").hide();
+});
 // Nouveaux js ************************* 

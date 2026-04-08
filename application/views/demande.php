@@ -215,21 +215,35 @@
                         </select>
                     </div>
                     <!-- NOUVEAU CHAMP : SELECTIONNER UN AGENT AVEC DATALIST -->
-<div class="mb-2">
-    <div class="row">
-        <div class="col-12">
-            <label class="form-label">Agent :</label>
-            <input type="text" class="form-control" id="agent_search" list="agent_list" placeholder="Rechercher un agent..." autocomplete="off">
-            <datalist id="agent_list">
-                <?php if (isset($agents) && count($agents) > 0): ?>
-                    <?php for ($i = 0; $i < count($agents); $i++) : ?>
-                        <option value="<?= htmlspecialchars($agents[$i]->nomUser . ' ' . $agents[$i]->prenomUser) ?>" data-id="<?= $agents[$i]->idUser ?>">
-                    <?php endfor; ?>
-                <?php endif; ?>
-            </datalist>
-            <input type="hidden" id="agent_selected" name="agent_id" value="">
-        </div>
+<!-- RECHERCHE AGENT EXACTEMENT COMME DANS MISSION -->
+<div class="mb-3">
+    <label class="form-label fw-bold">Agent bénéficiaire :</label>
+    <div class="input-group">
+        <input type="text" 
+               id="agent_search" 
+               class="form-control form-control-lg" 
+               placeholder="Tapez le nom, prénom, téléphone ou CIN de l'agent...">
+        <button type="button" class="btn btn-info" id="btn_search_agent">
+            <i class="fa-solid fa-magnifying-glass"></i> Rechercher
+        </button>
     </div>
+
+    <!-- Résultats de la recherche -->
+    <div id="agent_results" class="mt-2" 
+         style="max-height: 300px; overflow-y: auto; display: none; border: 1px solid #ddd; border-radius: 5px; background: white;">
+    </div>
+
+    <!-- Agent sélectionné -->
+    <div id="selected_agent_info" class="mt-2 alert alert-success d-none">
+        <i class="fa-solid fa-user-check"></i> 
+        <strong>Agent sélectionné :</strong>
+        <span id="selected_agent_name"></span>
+        <button type="button" class="btn btn-sm btn-danger float-end" id="clear_agent">
+            <i class="fa-solid fa-times"></i> Annuler
+        </button>
+    </div>
+
+    <input type="hidden" id="idagent" name="agent_id" value="">
 </div>
 
 <script>
