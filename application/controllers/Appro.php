@@ -292,6 +292,21 @@ class Appro extends CI_Controller
 
                 $idappro = $this->appro->insertAppro($data);
 
+                // Enregistrement des budgets sélectionnés
+                $idbudgets = $this->input->post('idbudget');
+                if (!empty($idbudgets)) {
+                    $this->load->model('ApproBudgetModel', 'appro_budget');
+                    $ids = explode(',', $idbudgets);
+                    $montant_total = $quantite * $prix;
+                    foreach ($ids as $idbudget) {
+                        $this->appro_budget->insert([
+                            'idAppro' => $idappro,
+                            'idbudget' => (int)$idbudget,
+                            'montant_utilise' => $montant_total  // ou répartir
+                        ]);
+                    }
+                }
+
                 /**
                  * ajouter le prix de l'appro dans le depense 
                  */
@@ -433,6 +448,52 @@ class Appro extends CI_Controller
     }
 
 
+    public function getBudgetsByProjet_json()
+    {
+        $idprojet = $this->input->post('idprojet');
+        $page = $this->input->post('page') ? (int)$this->input->post('page') : 1;
+        $per_page = 10;
+        $offset = ($page - 1) * $per_page;
+
+        $this->load->model('BudgetModel', 'budget');
+
+        // Récupérer tous les budgets du projet
+        $allBudgets = $this->db->select('b.*')
+            ->from('budget b')
+            ->where('b.idprojet', $idprojet)
+            ->get()
+            ->result();
+
+        // Calcul du reliquat pour chaque budget
+        foreach ($allBudgets as $budget) {
+            $reste = $this->db->select("(
+            b.budget - COALESCE(ld.total_depense, 0) - COALESCE(ld.total_return_liquidation, 0) - COALESCE(rr.total_return_relique, 0)
+        ) AS reste", false)
+                ->from('budget b')
+                ->join("(
+                SELECT am.idbudget, SUM(l.montant_depense) AS total_depense, SUM(l.montant_return) AS total_return_liquidation
+                FROM avance_mission am JOIN liquidation l ON l.idmission = am.idmission GROUP BY am.idbudget
+            ) ld", 'ld.idbudget = b.idbudget', 'left')
+                ->join("(
+                SELECT am.idbudget, SUM(r.montantReturn) AS total_return_relique
+                FROM avance_mission am JOIN liquidation l ON l.idmission = am.idmission
+                JOIN relique r ON r.idLiquidation = l.idliquidation GROUP BY am.idbudget
+            ) rr", 'rr.idbudget = b.idbudget', 'left')
+                ->where('b.idbudget', $budget->idbudget)
+                ->get()->row();
+            $budget->reste = $reste ? $reste->reste : $budget->budget;
+        }
+
+        $total = count($allBudgets);
+        $paginatedBudgets = array_slice($allBudgets, $offset, $per_page);
+
+        echo json_encode([
+            'success' => true,
+            'datas' => $paginatedBudgets,
+            'total' => $total,
+            'total_pages' => ceil($total / $per_page)
+        ]);
+    }
 
 
 
