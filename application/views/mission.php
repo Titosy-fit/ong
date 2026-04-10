@@ -139,7 +139,7 @@
                 <form action="<?= base_url('Mission/register') ?>" method="post">
                     <!-- Selection Agent direct sur la page -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Agent bénéficiaire :</label>
+                        <label class="form-label fw-bold">Agent utilitaire :</label>
                         <div class="input-group">
                             <input type="text" id="agent_search" class="form-control" placeholder="Tapez le nom ou prénom de l'agent...">
                             <button type="button" class="btn btn-info" id="btn_search_agent">
@@ -157,6 +157,30 @@
                         </div>
                         <input type="hidden" id="idagent" name="idagent">
                     </div>
+                    <!-- ==================== AGENT BÉNÉFICIAIRE (nouvelle table) ==================== -->
+<div class="mb-3">
+    <label class="form-label fw-bold">Agent bénéficiaire :</label>
+    <div class="input-group">
+        <input type="text" id="beneficiaire_search" class="form-control" placeholder="Nom ou prénom du bénéficiaire...">
+        <button type="button" class="btn btn-info" id="btn_search_beneficiaire">
+            <i class="fa-solid fa-magnifying-glass"></i> Rechercher
+        </button>
+        <button type="button" class="btn btn-success" id="btn_add_new_beneficiaire">
+            <i class="fa-solid fa-plus"></i> Nouveau bénéficiaire
+        </button>
+    </div>
+
+    <div id="beneficiaire_results" class="mt-2" style="max-height: 250px; overflow-y: auto; display: none; border: 1px solid #ddd; border-radius: 5px; background: white;"></div>
+
+    <div id="selected_beneficiaire_info" class="mt-2 alert alert-success d-none">
+        <i class="fa-solid fa-user-check"></i> <strong>Bénéficiaire sélectionné :</strong>
+        <span id="selected_beneficiaire_name"></span>
+        <button type="button" class="btn btn-sm btn-danger float-end" id="clear_beneficiaire">
+            <i class="fa-solid fa-times"></i> Annuler
+        </button>
+    </div>
+    <input type="hidden" id="idbeneficiaire" name="idbeneficiaire" required>
+</div>
 
                     <div class="row mb-2">
                         <div class="col">
@@ -310,7 +334,7 @@
                 </div> -->
                 <!-- Recherche par projet  -->
                 <!-- Filtre  -->
-                <div class="filtre_mission mt-3">
+                <!-- <div class="filtre_mission mt-3">
                     <form action="<?= base_url('Mission/filtre-reliquat') ?>" method="get">
                         <input type="hidden" name="projet" value="<?= $_POST['idprojet'] ?? '' ?>">
                         <button class="btn btn-info"><i class="fas fa-money-bill-wave"></i> Reliquat non retourné</button>
@@ -319,7 +343,7 @@
                         <input type="hidden" name="projet" value="<?= $_POST['idprojet'] ?? '' ?>">
                         <button class="btn btn-danger"><i class="fas fa-exclamation-circle"></i> Liquidation non éffectué</button>
                     </form>
-                </div>
+                </div> -->
                 <!-- Filtre  -->
                 <div class="_tableau mt-4">
                     <table class="table table">

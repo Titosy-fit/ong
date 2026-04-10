@@ -196,6 +196,12 @@ class Mission extends CI_Controller
         if (isset($_SESSION['id_user'])) {
             $idUser = $_SESSION['id_user'];
         }
+        $idbeneficiaire = $this->input->post('idbeneficiaire');
+if (empty($idbeneficiaire) || $idbeneficiaire == 0) {
+    $idbeneficiaire = null;
+} else {
+    $idbeneficiaire = (int)$idbeneficiaire;
+}
 
         $data = [
             'date_reception_avence' => $date_reception,
@@ -206,7 +212,8 @@ class Mission extends CI_Controller
             'montant_avance' => $avance,
             'date_debut_mission' => $date_debut,
             'date_fin_mission' => $date_fin,
-            'idagent' => $idagent,
+            'idagent' => $idagent,          // agent utilitaire (interne)
+            'idbeneficiaire'        => $idbeneficiaire,
             'idadmin' => $_SESSION['idadmin'],
             'idUser' => $idUser,
             'idprojet' =>  $projet,
@@ -709,4 +716,33 @@ class Mission extends CI_Controller
 
         return $this->pagination->create_links();
     }
+        // ====================== BÉNÉFICIAIRE ======================
+   public function search_beneficiaire()
+{
+    $recherche = $this->input->post('recherche');
+    $this->load->model('BeneficiaireModel2', 'benef');
+    $datas = $this->benef->search($recherche);
+    echo json_encode(['success' => true, 'datas' => $datas]);
+}
+
+    public function add_beneficiaire()
+{
+    // Charger le bon modèle
+    $this->load->model('BeneficiaireModel2', 'benef');
+    
+    $nom = trim($this->input->post('nom'));
+    
+    if (empty($nom)) {
+        echo json_encode(['success' => false, 'message' => 'Le nom est obligatoire']);
+        return;
+    }
+    
+    $id = $this->benef->insert(['nom' => $nom]);
+    
+    if ($id) {
+        echo json_encode(['success' => true, 'id' => $id, 'nom' => $nom]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'insertion']);
+    }
+}
 }

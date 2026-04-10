@@ -550,7 +550,7 @@ $(document).ready(function () {
 					Myalert.erreur();
 				}
 			})
-			.fail(function () {});
+			.fail(function () { });
 	});
 
 	$(document).on("click", ".detail", function () {
@@ -743,5 +743,109 @@ $(document).on("click", "#clear_agent", function () {
 
 	if (typeof Myalert !== "undefined" && Myalert.showToast) {
 		Myalert.showToast("Agent désélectionné", "info", 1500);
+	}
+});
+// ====================== RECHERCHE + AJOUT BÉNÉFICIAIRE ======================
+function searchBeneficiaire(recherche = "") {
+	if (recherche.length < 2) { // Minimum 2 caractères pour la recherche
+		$("#beneficiaire_results").hide();
+		return;
+	}
+
+	$.ajax({
+		url: base_url("Mission/search_beneficiaire"),
+		type: "post",
+		data: { recherche: recherche },
+		dataType: "json",
+		beforeSend: function () {
+			$("#beneficiaire_results").html('<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Chargement...</div>').show();
+		},
+		success: function (response) {
+			if (response.success && response.datas.length > 0) {
+				let html = '<div style="max-height:300px;overflow-y:auto;">';
+				$.each(response.datas, function (i, b) {
+					html += `
+                    <div class="beneficiaire-result-item p-2 border-bottom" 
+                         data-id="${b.idbeneficiaire}" 
+                         data-nom="${escapeHtml(b.nom)}" 
+                         style="cursor: pointer;">
+                        <strong>${escapeHtml(b.nom)}</strong>
+                    </div>`;
+				});
+				html += '</div>';
+				$("#beneficiaire_results").html(html).show();
+			} else {
+				$("#beneficiaire_results").html('<div class="text-center p-3 text-secondary">Aucun bénéficiaire trouvé</div>').show();
+			}
+		},
+		error: function () {
+			$("#beneficiaire_results").html('<div class="text-center p-3 text-danger">Erreur de chargement</div>').show();
+		}
+	});
+}
+
+$(document).on("click", ".beneficiaire-result-item", function () {
+	let id = $(this).data("id");
+	let nom = $(this).data("nom");
+
+	$("#idbeneficiaire").val(id);
+	$("#selected_beneficiaire_name").html(`${nom}<br>`);
+	$("#selected_beneficiaire_info").removeClass("d-none");
+	$("#beneficiaire_results").hide();
+	$("#beneficiaire_search").val("");
+});
+
+$(document).on("click", "#btn_add_new_beneficiaire", function () {
+	let nom = prompt("Nom du bénéficiaire :");
+	if (!nom || nom.trim() === "") return;
+
+	$.ajax({
+		url: base_url("Mission/add_beneficiaire"),
+		type: "post",
+		data: { nom: nom.trim() },
+		dataType: "json",
+		success: function (res) {
+			if (res.success) {
+				$("#idbeneficiaire").val(res.id);
+				$("#selected_beneficiaire_name").html(res.nom);
+				$("#selected_beneficiaire_info").removeClass("d-none");
+
+				if (typeof Myalert !== "undefined" && Myalert.showToast) {
+					Myalert.showToast("Nouveau bénéficiaire ajouté", "success", 2000);
+				} else {
+					alert("Bénéficiaire ajouté avec succès");
+				}
+			} else {
+				if (typeof Myalert !== "undefined" && Myalert.erreur) {
+					Myalert.erreur(res.message || "Erreur lors de l'ajout");
+				} else {
+					alert(res.message || "Erreur lors de l'ajout");
+				}
+			}
+		},
+		error: function () {
+			if (typeof Myalert !== "undefined" && Myalert.erreur) {
+				Myalert.erreur("Erreur de connexion");
+			} else {
+				alert("Erreur de connexion");
+			}
+		}
+	});
+});
+
+$(document).on("keyup", "#beneficiaire_search", function () {
+	searchBeneficiaire($(this).val().trim());
+});
+$(document).on("click", "#btn_search_beneficiaire", function () {
+	searchBeneficiaire($("#beneficiaire_search").val().trim());
+});
+$(document).on("click", "#clear_beneficiaire", function () {
+	$("#idbeneficiaire").val("");
+	$("#selected_beneficiaire_info").addClass("d-none");
+	$("#beneficiaire_search").val("");
+	$("#beneficiaire_results").hide();
+
+	if (typeof Myalert !== "undefined" && Myalert.showToast) {
+		Myalert.showToast("Bénéficiaire désélectionné", "info", 1500);
 	}
 });
