@@ -261,19 +261,19 @@
                 <?php endif ?>
                 <div class="owl-carousel">
                     <?php foreach ($projets as $key => $projet) :  ?>
-                        <form action="<?= base_url('Liquidation/searchProjet') ?>" method="post">
+                        <!-- <form action="<?= base_url('Liquidation/searchProjet') ?>" method="post">
                             <input type="hidden" name="idprojet" value="<?= $projet->idprojet ?>">
                             <button type="submit" class="projet_ <?= (isset($_POST['idprojet']) && $_POST['idprojet'] == $projet->idprojet) ? 'projet_active' : '' ?>">
-                                <div>
+                                 <div>
                                     <span class="icone_search"><i class="fas fa-key text-info"></i></span>
                                     <?= $projet->codeprojet ?>
                                 </div>
                                 <div>
                                     <span class="icone_search"><i class="fas fa-map-marker-alt text-primary"></i></span>
                                     <?= $projet->regionprojet ?>
-                                </div>
+                                </div> 
                             </button>
-                        </form>
+                        </form> -->
 
                     <?php endforeach ?>
                 </div>
