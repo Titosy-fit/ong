@@ -261,7 +261,7 @@ $route['search-projet'] = 'Projet/search' ;
 
 // Beneficiaire 
 $route['beneficiaire'] = 'Beneficiaire' ; 
-$route['beneficiaires'] = 'Beneficiaires' ; 
+$route['beneficiaires'] = 'Beneficiaire' ; 
 $route['register-bene'] = 'Beneficiaire/register' ; 
 $route['edit-bene'] = 'Beneficiaire/edit' ; 
 $route['search-bene'] = 'Beneficiaire/search' ; 

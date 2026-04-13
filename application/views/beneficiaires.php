@@ -2,128 +2,216 @@
     <div class="wrapper">
         <div class="corps">
             <div class="stock_corps">
-                <!-- En-tête avec infos bénéficiaire -->
-                <div class="card mb-4">
-                    <div class="card-header bg-info text-white">
-                        <h4>Historique des missions - <?= htmlspecialchars($beneficiaire->nom) ?></h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="stat-card">
-                                    <h5>Total missions</h5>
-                                    <h3><?= $statistiques->total_missions ?? 0 ?></h3>
-                                </div>
+
+                <!-- MODAL -->
+                <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editModalLabel">Modification de l'Utilisateur</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true"><i class="fa-solid fa-x"></i></span>
+                                </button>
                             </div>
-                            <div class="col-md-3">
-                                <div class="stat-card">
-                                    <h5>Total avances</h5>
-                                    <h3><?= number_format($statistiques->total_avances ?? 0, 0, ',', ' ') ?> Ar</h3>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stat-card">
-                                    <h5>Moyenne avance</h5>
-                                    <h3><?= number_format($statistiques->moyenne_avance ?? 0, 0, ',', ' ') ?> Ar</h3>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stat-card">
-                                    <h5>Première mission</h5>
-                                    <h3><?= $statistiques->premiere_mission ? date('d/m/Y', strtotime($statistiques->premiere_mission)) : 'N/A' ?></h3>
-                                </div>
+                            <div class="modal-body">
+                                <form action="<?= base_url('edit-bene') ?>" id="modifClient" method="post">
+                                    <input id="idbeneficiaire" name="idbeneficiaire" type="text" class="form-control input_form-control" required>
+                                    <p class="text-danger d-none" id="ms_error_modif">Le numéro ou le numéro de CIN que vous avez entré existe déjà.</p>
+                                    <div class="mb-2 not_public">
+                                        <label class="form-label ">Nom : </label>
+                                        <input id="nom_modif" name="nom" type="text" class="form-control input_form-control" required>
+                                    </div>
+                                    <div class="mb-2 not_public">
+                                        <label class="form-label ">Prénom : </label>
+                                        <input id="prenom_modif" name="prenom" type="text" class="form-control input_form-control" required>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Adresse : </label>
+                                        <input name="adress" id="address_modif" type="text" class="form-control input_form-control " required>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Numéro Téléphone : </label>
+                                        <input name="numero" id="num_modif" type="text" class="form-control input_form-control" required>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Email : </label>
+                                        <input name="email" id="email_modif" type="email" class="form-control input_form-control" required>
+                                        <div class="text-danger fs-5 font-weight-bold">
+                                            <?= form_error('email'); ?>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">Numéro CIN : </label>
+                                        <input name="num_cin" id="num_cin_modif" type="text" class="form-control input_form-control" required>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label">Date CIN : </label>
+                                        <input name="date_cin" id="date_cin_modif" type="date" class="form-control input_form-control" required>
+                                    </div>
+
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-info d-none" id="modification"><i class="fas fa-pencil-alt"></i> Modifier</button>
+                                        <a href="#" id="modifier" class="btn btn-info"><i class="fas fa-pencil-alt"></i> Modifier</a>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- FIN MODAL -->
 
-                <!-- Tableau de l'historique -->
-                <div class="_tableau">
-                    <table class="table table-bordered">
-                        <thead class="table-info">
-                            <tr>
-                                <th>N° OM</th>
-                                <th>N° ASM</th>
-                                <th>Objet</th>
-                                <th>Lieu</th>
-                                <th>Date début</th>
-                                <th>Date fin</th>
-                                <th>Montant avance</th>
-                                <th>Projet</th>
-                                <th>Agent</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($historique)): ?>
-                                <tr>
-                                    <td colspan="10" class="text-center">Aucune mission trouvée pour ce bénéficiaire</td>
-                                </tr>
-                            <?php else: ?>
-                                <?php foreach ($historique as $mission): ?>
+
+
+                <!-- onglet  -->
+                <div class="onglet">
+                    <a href="<?= base_url('dispatch') ?>" id="panier_" class="onglet_btn ">Nouvel enregistrement</a>
+                    <a href="<?= base_url('liste') ?>" class="onglet_btn">Liste des matériels distribués</a>
+                    <a href="<?= base_url('beneficiaire') ?>" class="onglet_btn active">Bénéficiaire</a>
+                </div>
+
+
+                <?php if (isset($_SESSION['let_test']) && !$_SESSION['let_test']) :  ?>
+                    <form action="" method="post">
+                    <?php else : ?>
+                        <form action="<?= base_url('register-bene') ?>" method="post">
+                        <?php endif; ?>
+                        <div class="mb-2 not_public">
+                            <p class="text-danger d-none" id="ms_error">Le numéro ou le numéro de CIN que vous avez entré existe déjà.</p>
+                            <label class="form-label ">Nom : </label>
+                            <input id="nom" name="nom" type="text" class="form-control input_form-control" required>
+                        </div>
+                        <div class="mb-2 not_public">
+                            <label class="form-label ">Prénom : </label>
+                            <input id="prenom" name="prenom" type="text" class="form-control input_form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Adresse : </label>
+                            <input name="adress" id="address" type="text" class="form-control input_form-control " required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Numéro Téléphone : </label>
+                            <input name="numero" id="num" type="text" class="form-control input_form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Email : </label>
+                            <input name="email" id="email" type="email" class="form-control input_form-control" required>
+                            <div class="text-danger fs-5 font-weight-bold">
+                                <?= form_error('email'); ?>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Numéro CIN : </label>
+                            <input name="num_cin" id="num_cin" type="text" class="form-control input_form-control" required>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label">Date CIN : </label>
+                            <input name="date_cin" id="date_cin" type="date" class="form-control input_form-control" required>
+                        </div>
+
+                        <div class="_boutton">
+                            <?php if (isset($_SESSION['let_test']) && !$_SESSION['let_test']) :  ?>
+                                <button type="button" class="btn btn-info" disabled>
+                                    <i class="fas fa-check"></i>
+                                    Valider
+                                </button>
+                            <?php else : ?>
+                                <button class="btn d-none" id="t_validation" type="button">T-valider</button>
+                                <button type="button" class="btn btn-info" id="valider">
+                                    <i class="fas fa-check"></i>
+                                    <div class="spinner-wrapper d-none" id="spinner_validation">
+                                        <div class="spinner-border"></div>
+                                    </div>
+                                    Valider
+                                </button>
+                            <?php endif  ?>
+                        </div>
+                        </form>
+                        <?php if ($this->session->userdata('add_bene')) :  ?>
+                            <script>
+                                Myalert.added();
+                            </script>
+                        <?php endif  ?>
+                        <?php $this->session->unset_userdata('add_bene') ?>
+                        <?php if ($this->session->userdata('delete_bene')) :  ?>
+                            <script>
+                                Myalert.updated();
+                            </script>
+                        <?php endif  ?>
+                        <?php $this->session->unset_userdata('delete_bene') ?>
+
+
+                        <form action="<?= base_url('search-bene'); ?>" method="get">
+                            <div class="input-group mt-3 mb-3">
+                                <input name="recherche" type="text" class="form-control" placeholder="Recherche" value="<?= $_POST['keyword'] ?? '' ?>">
+                                <?php if (isset($_SESSION['let_test']) && !$_SESSION['let_test']) :  ?>
+                                    <button class="btn btn-info" type="button" disabled>
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                <?php else : ?>
+                                    <button class="btn btn-info" type="submit">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </form>
+
+                        <div class="_tableau mt-4">
+                            <table class="table table">
+                                <thead class="table-info">
                                     <tr>
-                                        <td><?= htmlspecialchars($mission->numero_om) ?></td>
-                                        <td><?= htmlspecialchars($mission->numero_asm) ?></td>
-                                        <td><?= htmlspecialchars($mission->objet_mission) ?></td>
-                                        <td><?= htmlspecialchars($mission->lieu_mission) ?></td>
-                                        <td><?= date('d/m/Y', strtotime($mission->date_debut_mission)) ?></td>
-                                        <td><?= date('d/m/Y', strtotime($mission->date_fin_mission)) ?></td>
-                                        <td class="text-end"><?= number_format($mission->montant_avance, 0, ',', ' ') ?> Ar</td>
-                                        <td><?= htmlspecialchars($mission->codeprojet) ?></td>
-                                        <td><?= htmlspecialchars($mission->agent_nom . ' ' . $mission->agent_prenom) ?></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info btn-detail" data-id="<?= $mission->idmission ?>">
-                                                <i class="fas fa-eye"></i> Détails
-                                            </button>
-                                        </td>
+                                        <th>Nom</th>
+                                        <th>Prénom</th>
+                                        <th>Adresse</th>
+                                        <th>Numéro Télephone</th>
+                                        <th>Email</th>
+                                        <th>N° CIN </th>
+                                        <th>Date CIN</th>
+                                        <th>Editeur</th>
+                                        <th>Actions</th>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                    
-                    <!-- Pagination -->
-                    <?php if (!empty($pagination)): ?>
-                        <div class="d-flex justify-content-center mt-4">
-                            <?= $pagination ?>
+                                </thead>
+                                <tbody class="search-results">
+                                    <?php foreach ($datas as $key => $bene) : ?>
+                                        <tr>
+                                            <td><?= $bene->nombene ?></td>
+                                            <td><?= $bene->prenombene  ?></td>
+                                            <td><?= $bene->adressebene  ?></td>
+                                            <td><?= $bene->telbene  ?></td>
+                                            <td><?= $bene->mailbene  ?></td>
+                                            <td><?= $bene->numcinbene  ?></td>
+                                            <td><?= $bene->datecinbene  ?></td>
+                                            <td><?= $bene->prenomUser ?? 'Admin'  ?></td>
+                                            <td>
+
+                                                <?php if (isset($_SESSION['let_test']) && !$_SESSION['let_test']) :  ?>
+                                                    <button class="btn btn-danger" type="button" disabled>
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+
+                                                    <button type="button" class="btn btn-warning " disabled>
+                                                        <i class="fa-solid fa-edit"></i>
+                                                    </button>
+
+                                                <?php else : ?>
+                                                    <button class="btn btn-danger delete" type="button" data-id="<?= $bene->idbeneficiaire ?>">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+
+                                                    <button type="button" class="btn btn-warning edit" data-toggle="modal" data-target="#editModal" data-id="<?= $bene->idbeneficiaire ?>">
+                                                        <i class="fa-solid fa-edit"></i>
+                                                    </button>
+                                                <?php endif; ?>
+
+                                            </td>
+                                        </tr>
+                                    <?php endforeach  ?>
+                                </tbody>
+                            </table>
+                            <p class="pagination pagination-sm"><?php echo $liens; ?></p>
                         </div>
-                    <?php endif; ?>
-                </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Modal pour les détails -->
-<div class="modal fade" id="detailModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Détails de la mission</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="detailContent">
-                <div class="text-center">
-                    <div class="spinner-border"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-$(document).ready(function() {
-    $('.btn-detail').click(function() {
-        var idmission = $(this).data('id');
-        $.ajax({
-            url: base_url('Mission/details'),
-            type: 'post',
-            data: { idmission: idmission },
-            success: function(response) {
-                $('#detailContent').html(response);
-                $('#detailModal').modal('show');
-            }
-        });
-    });
-});
-</script>

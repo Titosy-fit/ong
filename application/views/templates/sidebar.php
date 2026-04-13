@@ -86,12 +86,12 @@
                     <span class="ms-1">Gestion des utilisateurs</span>
                 </a>
             <?php endif  ?>
-            <!-- <?php if ($_SESSION['user_type'] == 'admin') : ?>
+            <?php if ($_SESSION['user_type'] == 'admin') : ?>
                 <a href="<?= base_url('beneficiaires') ?>" class="sidebar-link <?= (basename($_SERVER['PHP_SELF']) == 'beneficiaire') ? 'active' : '' ?>">
                     <span class="icon"><i class="fas fa-user-tie"></i></span>
                     <span class="ms-1">Gestion des bénéficiaire</span>
                 </a>
-            <?php endif  ?> -->
+            <?php endif  ?>
             <!-- <a href="<?= base_url('emploiMl') ?>" class="sidebar-link <?= (basename($_SERVER['PHP_SELF']) == 'emploi' || basename($_SERVER['PHP_SELF']) == 'emploiMl') ? 'active' : '' ?>">
                 <span class="icon"><i class="fas fa-video"></i></span>
                 <span class="ms-1">Tutoriel</span>
