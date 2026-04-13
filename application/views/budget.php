@@ -239,7 +239,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Ligne budgétaire : </label>
-                            <input type="number" class="form-control " id="ligne" name="ligne" required>
+                            <input type="text" class="form-control " id="ligne" name="ligne" required>
                             <p class="text-danger d-none" id="ms-ligne">Cette ligne budgétaire existe déjà.</p>
                         </div>
                         <div class="mb-3">

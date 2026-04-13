@@ -251,7 +251,7 @@ class Budget extends CI_Controller
 
         $ligne  = '';
         if (isset($_POST['ligne']) && $_POST['ligne'] != '') {
-            $ligne = intval($_POST['ligne']);
+            $ligne = trim(strip_tags($_POST['ligne']));
         }
 
 
