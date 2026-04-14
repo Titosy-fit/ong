@@ -25,7 +25,7 @@
                                         <input name="titreprojet-edit" id="titreprojet-edit" type="text" class="form-control input_form-control " readonly>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Dénomination :</label>
+                                        <label class="form-label">Lieu :</label>
                                         <input type="text" class="form-control " name="denomination" id="denomination_modif" required>
                                         <p class="text-danger d-none" id="msg-denomination-modif">Cette dénomination est déjà utilisée</p>
                                     </div>
@@ -68,7 +68,7 @@
                             <input name="titreprojet" id="titreprojet" type="text" class="form-control input_form-control " readonly>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Dénomination :</label>
+                            <label class="form-label">Lieu :</label>
                             <input type="text" class="form-control " name="denomination" id="denomination" required>
                         </div>
                         <div class="mb-3">
@@ -161,7 +161,7 @@
                             <tr>
                                 <th>Code projet</th>
                                 <th>Titre du projet</th>
-                                <th>Dénomination</th>
+                                <th>Lieu</th>
                                 <th>Adresse</th>
                                 <th>Contact</th>
                                 <?php if (can_manage('logistique')) : ?>

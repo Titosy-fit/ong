@@ -74,7 +74,7 @@
                                         Valider
                                     </button>
                                 <?php else : ?>
-                                    <button type="button" class="d-none" id="real_validation">ok</button>
+                                    <button type="submit" class="d-none" id="real_validation">ok</button>
                                     <button type="button" class="btn btn-info" id="valider">
                                         <i class="fas fa-check"></i>
                                         <div class="spinner-wrapper d-none" id="spinner_validation">

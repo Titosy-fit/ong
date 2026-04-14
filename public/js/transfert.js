@@ -117,35 +117,35 @@ $(document).on('change', '#reference', function () {
 $(document.body).on("click", "#valider", function () {
     const id_pv = $("#pv_vente").val();
     const id_pv_destination = $("#pv_vente_destination").val();
+    
     if (id_pv != id_pv_destination) {
         const reference = $("#reference").val();
         const idmateriel = $("#idmateriel").val();
-        const designationmateriel = $("#designationmateriel").val();
-        const prix = parseInt($("#prix").val(), 10);
         const quantite = $("#quantite").val();
-
         const unite_selectione = $('#unite').find('option:selected');
-
-        const montant = parseInt($("#montant").val(), 10);
-
 
         // vérification du quantité 
         const identification = $(unite_selectione).data('id');
-        const qte_dispo = quantite_dispo_tab[quantite_dispo_tab.length - 1].quantite;
+        
+        if (quantite_dispo_tab.length > 0) {
+            const qte_dispo = quantite_dispo_tab[quantite_dispo_tab.length - 1].quantite;
+            let total_qte = parseInt(qteMinUnit(real_unite, quantite, identification));
 
-
-        let total_qte = parseInt(qteMinUnit(real_unite, quantite, identification));
-
-        if (reference != '' && idmateriel != '' && designationmateriel != '' && quantite > 0 && reference != '' && prix != '' && montant != '') {
-            if (qte_dispo >= total_qte) {
-                $('#qte_min').val(total_qte);
-
-                $('#real_validation').click();
+            if (reference != '' && idmateriel != '' && quantite > 0) {
+                if (qte_dispo >= total_qte) {
+                    $('#qte_min').val(total_qte);
+                    shwoSpinner(this, ['reference', 'idmateriel', 'quantite']);
+                    $('#real_validation').click();
+                }
+                else {
+                    // stock insufisant
+                    Myalert.erreur('Le stock est insuffisant.');
+                }
+            } else {
+                Myalert.erreur('Veuillez remplir tous les champs obligatoires.');
             }
-            else {
-                // stock insufisant
-                Myalert.erreur('Le stock est insuffisant.');
-            }
+        } else {
+            Myalert.erreur('Veuillez d\'abord sélectionner un article valide avec du stock.');
         }
     } else {
         // point de vente identique 
