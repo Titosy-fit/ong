@@ -72,8 +72,8 @@ $(document).on('change', '#reference', function () {
 
                         real_unite = unites_;
 
-                        console.log( unites_ );
-                        
+                        console.log(unites_);
+
 
 
                         const the_qte = covertion(unites_, quantite);
@@ -83,8 +83,8 @@ $(document).on('change', '#reference', function () {
                             qte_dispo_val = stock_texte(the_qte, 0);
                         }
 
-                        console.log( the_qte );
-                        
+                        console.log(the_qte);
+
 
 
                         $('#qte_dipo').val(qte_dispo_val);
@@ -117,7 +117,7 @@ $(document).on('change', '#reference', function () {
 $(document.body).on("click", "#valider", function () {
     const id_pv = $("#pv_vente").val();
     const id_pv_destination = $("#pv_vente_destination").val();
-    
+
     if (id_pv != id_pv_destination) {
         const reference = $("#reference").val();
         const idmateriel = $("#idmateriel").val();
@@ -126,7 +126,7 @@ $(document.body).on("click", "#valider", function () {
 
         // vérification du quantité 
         const identification = $(unite_selectione).data('id');
-        
+
         if (quantite_dispo_tab.length > 0) {
             const qte_dispo = quantite_dispo_tab[quantite_dispo_tab.length - 1].quantite;
             let total_qte = parseInt(qteMinUnit(real_unite, quantite, identification));

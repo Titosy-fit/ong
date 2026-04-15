@@ -76,46 +76,156 @@
                 <div class="card mb-4" style="border: none; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;">
                   
                     <div class="card-body" style="padding: 24px;">
+                        <h5 style="color: #820000; margin-bottom: 16px; font-weight: 700;">
+                            <i class="fas fa-search me-2"></i> Recherche Bénéficiaire
+                        </h5>
                         <div class="input-group" style="gap: 12px;">
-                            <input type="text" id="searchBeneficiaire" class="form-control" placeholder="Nom, prénom, téléphone, CIN..." autocomplete="off" style="border-radius: 12px; border: 2px solid #e0e0e0; padding: 12px 16px; font-size: 16px;">
+                            <input type="text" id="searchBeneficiaire" class="form-control" placeholder="Tapez le nom du bénéficiaire..." autocomplete="off" style="border-radius: 12px; border: 2px solid #e0e0e0; padding: 12px 16px; font-size: 16px;">
                             <button class="btn" type="button" id="btnSearch" style="background: #820000; color: white; border-radius: 12px; padding: 12px 24px; border: none; transition: all 0.3s;">
                                 <i class="fa-solid fa-magnifying-glass"></i> Rechercher
                             </button>
                         </div>
-                        <div id="searchResult" class="mt-4"></div>
+                        <!-- Résultats de recherche (liste déroulante) -->
+                        <div id="searchResult" class="mt-3" style="max-height: 300px; overflow-y: auto; display: none; border: 1px solid #e0e0e0; border-radius: 12px; background: white;"></div>
                     </div>
                 </div>
 
-                <!-- SECTION HISTORIQUE DU BÉNÉFICIAIRE -->
-                <div id="historiqueSection" class="card" style="display: none; border: none; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;">
-                    <div class="card-header" style="background: linear-gradient(135deg, #820000 0%, #a00000 100%); color: white; border: none; padding: 20px 24px;">
-                        <h5 class="mb-0"><i class="fas fa-history me-2"></i> Historique des distributions - <span id="beneficiaireNom" style="font-weight: 600;"></span></h5>
-                    </div>
-                    <div class="card-body" style="padding: 0;">
-                        <div class="_tableau">
-                            <table class="table table-modern" style="width: 100%; border-collapse: separate; border-spacing: 0;">
-                                <thead style="background: #f8f9fa;">
-                                    <tr style="border-bottom: 2px solid #820000;">
-                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #333;">Matériel</th>
-                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #333;">Série</th>
-                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #333;">Date de distribution</th>
-                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #333;">État</th>
-                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #333;">Observations</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="historiqueList">
-                                    <tr id="noHistoryRow">
-                                        <td colspan="5" class="text-center" style="padding: 40px; color: #999;">Aucun historique trouvé pour ce bénéficiaire.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                <!-- SECTION INFO BÉNÉFICIAIRE SÉLECTIONNÉ -->
+                <div id="selectedBenefInfo" class="card mb-4" style="display: none; border: none; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;">
+                    <div class="card-body" style="padding: 20px 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                            <div>
+                                <h6 style="color: #820000; margin-bottom: 8px;"><i class="fas fa-user-check"></i> Bénéficiaire sélectionné</h6>
+                                <span id="selectedBenefName" style="font-size: 18px; font-weight: 600; color: #333;"></span>
+                            </div>
+                            <button class="btn btn-sm" id="clearBenef" style="background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px; padding: 6px 14px; color: #666;">
+                                <i class="fa-solid fa-times"></i> Changer
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Message si utilisateur non trouvé -->
+                <!-- ONGLETS MISSION / LIQUIDATION / RELIQUAT -->
+                <div id="historiqueSection" style="display: none;">
+                    <div class="card" style="border: none; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;">
+                        
+                        <!-- Onglets -->
+                        <div class="card-header" style="background: white; border: none; padding: 0;">
+                            <div style="display: flex; border-bottom: 2px solid #f0f0f0;">
+                                <button class="tab-btn active" data-tab="missions" style="flex: 1; padding: 16px; border: none; background: none; font-weight: 600; color: #820000; border-bottom: 3px solid #820000; cursor: pointer; transition: all 0.3s; font-size: 14px;">
+                                    <i class="fas fa-plane-departure me-1"></i> Missions
+                                    <span class="badge bg-danger ms-1" id="countMissions">0</span>
+                                </button>
+                                <button class="tab-btn" data-tab="liquidations" style="flex: 1; padding: 16px; border: none; background: none; font-weight: 600; color: #999; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.3s; font-size: 14px;">
+                                    <i class="fas fa-file-invoice-dollar me-1"></i> Liquidations
+                                    <span class="badge bg-warning ms-1" id="countLiquidations">0</span>
+                                </button>
+                                <button class="tab-btn" data-tab="reliquats" style="flex: 1; padding: 16px; border: none; background: none; font-weight: 600; color: #999; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.3s; font-size: 14px;">
+                                    <i class="fas fa-undo-alt me-1"></i> Reliquats
+                                    <span class="badge bg-success ms-1" id="countReliquats">0</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-body" style="padding: 0;">
+                            
+                            <!-- TAB: MISSIONS -->
+                            <div class="tab-content-panel" id="tab-missions" style="display: block;">
+                                <div class="_tableau">
+                                    <table class="table table-modern" style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                                        <thead style="background: #f8f9fa;">
+                                            <tr style="border-bottom: 2px solid #820000;">
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Code projet</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Objet</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">ASM / OM</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Agent</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Date début</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Date fin</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Lieu</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Avance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="missionsList">
+                                            <tr id="noMissionRow">
+                                                <td colspan="8" class="text-center" style="padding: 40px; color: #999;">
+                                                    <i class="fas fa-inbox" style="font-size: 36px; display: block; margin-bottom: 10px; opacity: 0.4;"></i>
+                                                    Aucune mission pour ce bénéficiaire.
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- TAB: LIQUIDATIONS -->
+                            <div class="tab-content-panel" id="tab-liquidations" style="display: none;">
+                                <div class="_tableau">
+                                    <table class="table table-modern" style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                                        <thead style="background: #f8f9fa;">
+                                            <tr style="border-bottom: 2px solid #c17900;">
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Code projet</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Objet mission</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">N° OM</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Avance</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Dépense</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Reliquat</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Retourné</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Date liquidation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="liquidationsList">
+                                            <tr id="noLiquidationRow">
+                                                <td colspan="8" class="text-center" style="padding: 40px; color: #999;">
+                                                    <i class="fas fa-inbox" style="font-size: 36px; display: block; margin-bottom: 10px; opacity: 0.4;"></i>
+                                                    Aucune liquidation pour ce bénéficiaire.
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- TAB: RELIQUATS -->
+                            <div class="tab-content-panel" id="tab-reliquats" style="display: none;">
+                                <div class="_tableau">
+                                    <table class="table table-modern" style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                                        <thead style="background: #f8f9fa;">
+                                            <tr style="border-bottom: 2px solid #2e7d32;">
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Objet mission</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">N° OM</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Montant retourné</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Reste à retourner</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Date retour</th>
+                                                <th style="padding: 14px 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px;">Date liquidation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="reliquatsList">
+                                            <tr id="noReliquatRow">
+                                                <td colspan="6" class="text-center" style="padding: 40px; color: #999;">
+                                                    <i class="fas fa-inbox" style="font-size: 36px; display: block; margin-bottom: 10px; opacity: 0.4;"></i>
+                                                    Aucun reliquat pour ce bénéficiaire.
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message si bénéficiaire non trouvé -->
                 <div id="noUserFound" class="alert" style="display: none; background: #fff3f3; border-left: 4px solid #820000; border-radius: 12px; padding: 16px 20px; margin-top: 20px;">
                     <i class="fas fa-exclamation-triangle" style="color: #820000;"></i> Aucun bénéficiaire trouvé avec ces critères.
+                </div>
+
+                <!-- Loader -->
+                <div id="loaderHistorique" style="display: none; text-align: center; padding: 40px;">
+                    <div class="spinner-border" style="color: #820000; width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                    <p class="mt-2" style="color: #999;">Chargement de l'historique...</p>
                 </div>
 
             </div>
@@ -130,7 +240,7 @@
         box-shadow: 0 0 0 0.2rem rgba(130, 0, 0, 0.25);
     }
     
-    .btn:hover {
+    #btnSearch:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(130, 0, 0, 0.3);
     }
@@ -142,17 +252,46 @@
     
     .table-modern tbody tr:hover {
         background: #fafafa;
-        transform: scale(1.01);
     }
     
     .table-modern td {
-        padding: 14px 16px;
+        padding: 12px 16px;
         color: #555;
+        font-size: 13px;
     }
     
-    .onglet_btn:not(.active):hover {
-        background: #f5f5f5;
-        color: #820000;
+    .benef-result-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .benef-result-item:hover {
+        background: linear-gradient(135deg, #fdf2f2 0%, #fff 100%);
+        padding-left: 20px;
+    }
+
+    .benef-result-item:last-child {
+        border-bottom: none;
+    }
+
+    .tab-btn {
+        position: relative;
+        outline: none;
+    }
+
+    .tab-btn:hover {
+        color: #820000 !important;
+        background: #fdf2f2 !important;
+    }
+
+    .tab-btn.active {
+        color: #820000 !important;
+        border-bottom: 3px solid #820000 !important;
     }
     
     @keyframes fadeIn {
@@ -160,8 +299,17 @@
         to { opacity: 1; transform: translateY(0); }
     }
     
-    #searchResult, #historiqueSection, #noUserFound {
+    #historiqueSection, #noUserFound, #selectedBenefInfo {
         animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeInRow {
+        from { opacity: 0; transform: translateX(-10px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .animated-row {
+        animation: fadeInRow 0.3s ease-out both;
     }
     
     .spinner-border-sm {
@@ -169,145 +317,10 @@
         height: 1rem;
         border-width: 0.2em;
     }
+
+    .badge {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 10px;
+    }
 </style>
-
-<script>
-    // Simulation de données (à remplacer par vos appels AJAX réels)
-    const beneficiairesData = {
-        1: {
-            id: 1,
-            nom: "DIALLO",
-            prenom: "Mamadou",
-            telephone: "778888999",
-            cin: "123456",
-            historique: [
-                { materiel: "Ordinateur portable Dell XPS", serie: "XPS-15-001", date: "2023-10-15", etat: "Distribué", obs: "Bon état, sous garantie" },
-                { materiel: "Clavier USB Logitech", serie: "CLAV-001", date: "2024-01-20", etat: "Distribué", obs: "Neuf" },
-                { materiel: "Souris sans fil", serie: "SOU-045", date: "2024-02-10", etat: "Distribué", obs: "Fonctionne parfaitement" }
-            ]
-        },
-        2: {
-            id: 2,
-            nom: "SOW",
-            prenom: "Aissatou",
-            telephone: "771112223",
-            cin: "654321",
-            historique: [
-                { materiel: "Tablette Samsung", serie: "TAB-10-002", date: "2024-02-10", etat: "Distribué", obs: "Sous garantie 1 an" }
-            ]
-        },
-        3: {
-            id: 3,
-            nom: "NDIAYE",
-            prenom: "Ousmane",
-            telephone: "765432109",
-            cin: "789012",
-            historique: [
-                { materiel: "Imprimante HP LaserJet", serie: "HPL-789", date: "2024-03-05", etat: "Distribué", obs: "Cartouches incluses" },
-                { materiel: "Onduleur", serie: "OND-456", date: "2024-03-05", etat: "Distribué", obs: "Neuf" }
-            ]
-        }
-    };
-
-    // Fonction pour rechercher un bénéficiaire (simulée)
-    function rechercherBeneficiaire(critere) {
-        const searchResultDiv = document.getElementById('searchResult');
-        const historiqueSection = document.getElementById('historiqueSection');
-        const noUserFound = document.getElementById('noUserFound');
-        
-        if (!critere.trim()) {
-            searchResultDiv.innerHTML = '<div class="alert alert-info" style="background: #e8f4fd; border-left: 4px solid #17a2b8; border-radius: 12px;">Veuillez saisir un critère de recherche.</div>';
-            historiqueSection.style.display = 'none';
-            noUserFound.style.display = 'none';
-            return;
-        }
-
-        // Simulation de recherche (à remplacer par un appel AJAX vers votre backend)
-        let foundBeneficiaire = null;
-        for (let id in beneficiairesData) {
-            const bene = beneficiairesData[id];
-            if (bene.nom.toLowerCase().includes(critere.toLowerCase()) ||
-                bene.prenom.toLowerCase().includes(critere.toLowerCase()) ||
-                bene.telephone.includes(critere) ||
-                bene.cin.includes(critere)) {
-                foundBeneficiaire = bene;
-                break;
-            }
-        }
-
-        if (foundBeneficiaire) {
-            // Afficher les infos du bénéficiaire trouvé
-            searchResultDiv.innerHTML = `
-                <div style="background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%); border-radius: 12px; padding: 20px; border-left: 4px solid #820000;">
-                    <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap;">
-                        <div>
-                            <h6 style="color: #820000; margin-bottom: 12px;"><i class="fas fa-user-check"></i> Bénéficiaire trouvé</h6>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                                <div><strong>Nom :</strong> ${foundBeneficiaire.nom}</div>
-                                <div><strong>Prénom :</strong> ${foundBeneficiaire.prenom}</div>
-                                <div><strong>Téléphone :</strong> ${foundBeneficiaire.telephone}</div>
-                                <div><strong>CIN :</strong> ${foundBeneficiaire.cin}</div>
-                            </div>
-                        </div>
-                        <button class="btn" onclick="afficherHistorique(${foundBeneficiaire.id})" style="background: #820000; color: white; border-radius: 10px; padding: 10px 20px; margin-top: 10px; border: none;">
-                            <i class="fas fa-chart-line"></i> Voir l'historique
-                        </button>
-                    </div>
-                </div>
-            `;
-            noUserFound.style.display = 'none';
-            historiqueSection.style.display = 'none';
-        } else {
-            searchResultDiv.innerHTML = '';
-            historiqueSection.style.display = 'none';
-            noUserFound.style.display = 'block';
-        }
-    }
-
-    // Fonction pour afficher l'historique d'un bénéficiaire
-    function afficherHistorique(beneficiaireId) {
-        const bene = beneficiairesData[beneficiaireId];
-        if (!bene) return;
-
-        // Mettre à jour le titre
-        document.getElementById('beneficiaireNom').innerText = `${bene.prenom} ${bene.nom}`;
-        
-        // Remplir le tableau d'historique
-        const tbody = document.getElementById('historiqueList');
-        tbody.innerHTML = '';
-        
-        if (bene.historique && bene.historique.length > 0) {
-            bene.historique.forEach((item, index) => {
-                const row = tbody.insertRow();
-                row.style.animation = `fadeIn 0.3s ease-out ${index * 0.1}s both`;
-                row.insertCell(0).innerHTML = `<i class="fas fa-laptop" style="color: #820000; margin-right: 8px;"></i>${item.materiel}`;
-                row.insertCell(1).innerText = item.serie;
-                row.insertCell(2).innerHTML = `<i class="far fa-calendar-alt" style="color: #820000; margin-right: 8px;"></i>${item.date}`;
-                row.insertCell(3).innerHTML = `<span style="background: #e8f5e9; color: #2e7d32; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">${item.etat}</span>`;
-                row.insertCell(4).innerText = item.obs;
-            });
-        } else {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding: 40px; color: #999;"><i class="fas fa-inbox" style="font-size: 48px; display: block; margin-bottom: 12px;"></i>Aucun historique trouvé pour ce bénéficiaire.</td></tr>';
-        }
-        
-        // Afficher la section historique
-        const historiqueSection = document.getElementById('historiqueSection');
-        historiqueSection.style.display = 'block';
-        
-        // Scroll vers l'historique
-        historiqueSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    // Événement au clic sur le bouton Rechercher
-    document.getElementById('btnSearch').addEventListener('click', function() {
-        const critere = document.getElementById('searchBeneficiaire').value;
-        rechercherBeneficiaire(critere);
-    });
-
-    // Recherche avec touche Entrée
-    document.getElementById('searchBeneficiaire').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            rechercherBeneficiaire(this.value);
-        }
-    });
-</script>

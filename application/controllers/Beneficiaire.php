@@ -334,4 +334,48 @@ class Beneficiaire extends CI_Controller
             ]);
         }
     }
+
+    /**
+     * Recherche bénéficiaire dans la table beneficiaire (BeneficiaireModel2)
+     */
+    public function search_benef_json()
+    {
+        $this->load->model('BeneficiaireModel2', 'benef2');
+        $keyword = trim(strip_tags($this->input->post('recherche')));
+
+        $datas = $this->benef2->search($keyword);
+
+        echo json_encode([
+            'success' => count($datas) > 0,
+            'datas' => $datas
+        ]);
+    }
+
+    /**
+     * Historique complet d'un bénéficiaire : missions, liquidations, reliquats
+     */
+    public function historique_json()
+    {
+        $this->load->model('BeneficiaireModel2', 'benef2');
+
+        $idbeneficiaire = (int)$this->input->post('idbeneficiaire');
+
+        if (!$idbeneficiaire) {
+            echo json_encode(['success' => false, 'message' => 'ID bénéficiaire requis']);
+            return;
+        }
+
+        $beneficiaire  = $this->benef2->get_by_id($idbeneficiaire);
+        $missions      = $this->benef2->get_missions($idbeneficiaire);
+        $liquidations  = $this->benef2->get_liquidations($idbeneficiaire);
+        $reliquats     = $this->benef2->get_reliquats($idbeneficiaire);
+
+        echo json_encode([
+            'success'      => true,
+            'beneficiaire' => $beneficiaire,
+            'missions'     => $missions,
+            'liquidations' => $liquidations,
+            'reliquats'    => $reliquats
+        ]);
+    }
 }
