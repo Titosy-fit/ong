@@ -131,8 +131,8 @@
 
                     <div class="onglet">
                         <a href="<?= base_url('demande-mat') ?>" id="panier_" class="onglet_btn active">Nouvel demande</a>
-                        <a href="<?= base_url('liste-demande') ?>" class="onglet_btn">Liste des demandes</a>
-                        <a href="<?= base_url('rendre-mat') ?>" class="onglet_btn">Retour de matériels</a>
+                        <a href="<?= base_url('liste-demande') ?>" class="onglet_btn">Récapitulatif de distribution</a>
+                        <a href="<?= base_url('rendre-mat') ?>" class="onglet_btn">Reliquat  matériels</a>
                     </div>
                     <div class="mb-2" id="denomination_pv">
                         <div class="row">
@@ -217,7 +217,7 @@
                     <!-- NOUVEAU CHAMP : SELECTIONNER UN AGENT AVEC DATALIST -->
 <!-- RECHERCHE AGENT EXACTEMENT COMME DANS MISSION -->
 <div class="mb-3">
-    <label class="form-label fw-bold">Agent bénéficiaire :</label>
+    <label class="form-label fw-bold">Agent Utilitaire :</label>
     <div class="input-group">
         <input type="text" 
                id="agent_search" 

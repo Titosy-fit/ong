@@ -25,8 +25,8 @@
 
                     <div class="onglet">
                         <a href="<?= base_url('demande-mat') ?>" id="panier_" class="onglet_btn ">Nouvel demande</a>
-                        <a href="<?= base_url('liste-demande') ?>" class="onglet_btn">Listes des demandes</a>
-                        <a href="<?= base_url('rendre-mat') ?>" class="onglet_btn active">Retour de matériels</a>
+                        <a href="<?= base_url('liste-demande') ?>" class="onglet_btn">Récapitulatif de distribution</a>
+                        <a href="<?= base_url('rendre-mat') ?>" class="onglet_btn active">Reliquat  matériels</a>
                     </div>
                     <h5>Retours de matériels</h5>
                     <?php if (isset($_SESSION['let_test']) && !$_SESSION['let_test']) :  ?>
