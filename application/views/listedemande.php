@@ -85,7 +85,7 @@
 
                 <!-- Onglets -->
                 <div class="onglet">
-                    <a href="<?= base_url('demande-mat') ?>" class="onglet_btn">Nouvel demande</a>
+                    <a href="<?= base_url('demande-mat') ?>" class="onglet_btn">Nouvelle demande</a>
                     <a href="<?= base_url('liste-demande') ?>" class="onglet_btn active">Récapitulatif de distribution</a>
                     <a href="<?= base_url('rendre-mat') ?>" class="onglet_btn">Reliquat matériels</a>
                 </div>
@@ -96,7 +96,64 @@
                         <i class="fa-solid fa-upload"></i> Importer fichier (Excel / PDF / Word / Photo)
                     </button>
                 </div>
+<!-- Bouton Import (modal fichier uniquement) -->
 
+<!-- ====================== SAISIE MANUELLE DIRECTE (juste en dessous) ====================== -->
+<div class="mb-4 p-3 border bg-light rounded">
+    
+
+    <div class="row g-3" id="manualInputs">
+
+       
+
+        <div class="col-md-3">
+            <label class="form-label">ENTANA NOZARAINA</label>
+            <input type="text" id="manual_entana" class="form-control" placeholder="Code article">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">DESIGNATION DE L'ARTICLE</label>
+            <input type="text" id="manual_designation" class="form-control" placeholder="Désignation">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Isany / Nombre</label>
+            <input type="number" id="manual_isany" class="form-control" value="1" min="1">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Date de réception</label>
+            <input type="date" id="manual_date" class="form-control" value="<?= date('Y-m-d') ?>">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Nom et prénom</label>
+            <input type="text" id="manual_nom" class="form-control" placeholder="Nom et prénom">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">CIN N°</label>
+            <input type="text" id="manual_cin" class="form-control" placeholder="CIN">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Fokontany</label>
+            <input type="text" id="manual_fokontany" class="form-control" placeholder="Fokontany">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Kaominina / Commune</label>
+            <input type="text" id="manual_commune" class="form-control" placeholder="Commune">
+        </div>
+
+    </div>
+
+    <div class="text-end mt-3">
+        <button type="button" id="btnSaveManual" class="btn btn-success">
+            <i class="fa-solid fa-save"></i> Enregistrer la saisie manuelle
+        </button>
+    </div>
+</div>
                 <!-- Formulaire de recherche -->
                 <form action="<?= base_url('liste-demande/search') ?>" method="post" class="mb-4" id="searchform">
                     <div class="group_form">
