@@ -162,7 +162,7 @@
     <label class="form-label fw-bold">Agent bénéficiaire :</label>
     <div class="input-group">
         <input type="text" id="beneficiaire_search" class="form-control" placeholder="Nom ou prénom du bénéficiaire...">
-        <button type="button" class="btn btn-info" id="btn_search_beneficiaire">
+        <button type="button" class="btn btn-info" id="searchBeneficiaire">
             <i class="fa-solid fa-magnifying-glass"></i> Rechercher
         </button>
         <button type="button" class="btn btn-success" id="btn_add_new_beneficiaire">

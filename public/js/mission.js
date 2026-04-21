@@ -849,3 +849,48 @@ $(document).on("click", "#clear_beneficiaire", function () {
 		Myalert.showToast("Bénéficiaire désélectionné", "info", 1500);
 	}
 });
+// ====================== RECHERCHE BÉNÉFICIAIRE AVEC HISTORIQUE ======================
+function searchBeneficiaireFull(critere) {
+	const searchResultDiv = $('#searchResult');
+	const noUserFound = $('#noUserFound');
+	const historiqueSection = $('#historiqueSection');
+
+	if (!critere || critere.trim() === '') {
+		searchResultDiv.hide();
+		noUserFound.hide();
+		return;
+	}
+
+	$.ajax({
+		type: 'post',
+		url: base_url('Beneficiaire/search_benef_json'),
+		data: { recherche: critere },
+		dataType: 'json',
+		beforeSend: function () {
+			searchResultDiv.html(
+				'<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Recherche...</div>'
+			).show();
+		},
+		success: function (response) {
+			if (response.success && response.datas.length > 0) {
+				let html = '';
+				$.each(response.datas, function (i, b) {
+					html += `
+                        <div class="benef-result-item"
+                             data-id="${b.idbeneficiaire}"
+                             data-nom="${escapeHtml(b.nom)}">
+                            <strong>${escapeHtml(b.nom)}</strong>
+                        </div>`;
+				});
+				searchResultDiv.html(html).show();
+				noUserFound.hide();
+			} else {
+				searchResultDiv.hide();
+				noUserFound.show();
+			}
+		},
+		error: function () {
+			searchResultDiv.html('<div class="text-danger p-2">Erreur</div>').show();
+		}
+	});
+}

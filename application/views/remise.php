@@ -24,7 +24,7 @@
                 <?php if ($_SESSION['user_type'] == 'admin') : ?>
 
                     <div class="onglet">
-                        <a href="<?= base_url('demande-mat') ?>" id="panier_" class="onglet_btn ">Nouvel demande</a>
+                        <a href="<?= base_url('demande-mat') ?>" id="panier_" class="onglet_btn ">Nouvelle demande</a>
                         <a href="<?= base_url('liste-demande') ?>" class="onglet_btn">Récapitulatif de distribution</a>
                         <a href="<?= base_url('rendre-mat') ?>" class="onglet_btn active">Reliquat  matériels</a>
                     </div>
