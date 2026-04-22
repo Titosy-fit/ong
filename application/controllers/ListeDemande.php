@@ -347,4 +347,174 @@ class ListeDemande extends CI_Controller
       ]);
     }
   }
+  /**
+ * Vérifier si un numéro de demande existe et est valide
+ */
+public function verifier_demande()
+{
+    $num_demande = trim(strip_tags($this->input->post('num_demande')));
+    
+    if (empty($num_demande)) {
+        echo json_encode(['success' => false, 'message' => 'Numéro de demande requis']);
+        return;
+    }
+    
+    // Vérifier que la demande existe et appartient à l'admin connecté
+    $demande = $this->db->select('dispatch.idfacture, dispatch.Facture, dispatch.idadmin, 
+                                   agent.nomUser, agent.prenomUser, agent.contact,
+                                   agent.numero_cin, agent.fokotany, agent.commune')
+                        ->from('dispatch')
+                        ->join('user as agent', 'agent.idUser = dispatch.idagent', 'left')
+                        ->where('dispatch.Facture', $num_demande)
+                        ->where('dispatch.idadmin', $_SESSION['idadmin'])
+                        ->where('dispatch.type_dispatch', 'emprunt')
+                        ->get()
+                        ->row();
+    
+    if ($demande) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Demande trouvée',
+            'idfacture' => $demande->idfacture,
+            'agent' => [
+                'nom' => $demande->nomUser ?? '',
+                'prenom' => $demande->prenomUser ?? '',
+                'nom_complet' => ($demande->nomUser && $demande->prenomUser) ? 
+                                 $demande->nomUser . ' ' . $demande->prenomUser : '',
+                'cin' => $demande->numero_cin ?? '',
+                'fokontany' => $demande->fokontany ?? '',
+                'commune' => $demande->commune ?? ''
+            ]
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false, 
+            'message' => 'Ce numéro de demande n\'existe pas ou ne vous appartient pas'
+        ]);
+    }
+}
+
+/**
+ * Enregistrer la saisie manuelle (AVEC ou SANS fichier)
+ */
+/**
+ * Enregistrer la saisie manuelle (AVEC ou SANS fichier)
+ */
+public function save_saisie_manuelle()
+{
+    // Activer l'affichage des erreurs pour le débogage
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    
+    // Vérifier la session
+    if (!isset($_SESSION['idadmin'])) {
+        echo json_encode(['success' => false, 'message' => 'Session expirée. Veuillez vous reconnecter.']);
+        return;
+    }
+    
+    $this->load->model('SaisieManuelleModel', 'saisie');
+    
+    $num_demande = trim(strip_tags($this->input->post('num_demande')));
+    
+    if (empty($num_demande)) {
+        echo json_encode(['success' => false, 'message' => 'Numéro de demande requis']);
+        return;
+    }
+    
+    // Récupérer l'idfacture à partir du numéro de demande
+    $demande = $this->db->select('idfacture')
+                        ->from('dispatch')
+                        ->where('Facture', $num_demande)
+                        ->where('idadmin', $_SESSION['idadmin'])
+                        ->get()
+                        ->row();
+    
+    if (!$demande) {
+        echo json_encode(['success' => false, 'message' => 'Demande introuvable']);
+        return;
+    }
+    
+    // Données de base
+    $data = [
+        'idfacture' => $demande->idfacture,
+        'num_demande' => $num_demande,
+        'entana_nozaraina' => trim(strip_tags($this->input->post('entana'))),
+        'designation' => trim(strip_tags($this->input->post('designation'))),
+        'isany' => (int)$this->input->post('isany'),
+        'date_reception' => $this->input->post('date_reception'),
+        'nom_prenom' => trim(strip_tags($this->input->post('nom'))),
+        'cin' => trim(strip_tags($this->input->post('cin'))),
+        'fokontany' => trim(strip_tags($this->input->post('fokontany'))),
+        'commune' => trim(strip_tags($this->input->post('commune'))),
+        'idadmin' => $_SESSION['idadmin']
+    ];
+    
+    // Vérifier s'il y a un fichier à uploader
+    $fichier_present = isset($_FILES['fichier']) && $_FILES['fichier']['name'] != '' && $_FILES['fichier']['error'] === UPLOAD_ERR_OK;
+    
+    if ($fichier_present) {
+        $upload_dir = 'public/upload/saisies_manuelles/';
+        $absolute_path = FCPATH . $upload_dir;
+        
+        // Créer le dossier s'il n'existe pas
+        if (!is_dir($absolute_path)) {
+            if (!mkdir($absolute_path, 0777, true)) {
+                echo json_encode([
+                    'success' => false, 
+                    'message' => 'Impossible de créer le dossier d\'upload'
+                ]);
+                return;
+            }
+        }
+        
+        $filename = $_FILES['fichier']['name'];
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        $unique_name = time() . '_' . uniqid('saisie_', true) . '_' . $_SESSION['idadmin'] . '.' . $ext;
+        $destination = $absolute_path . $unique_name;
+        
+        $uploaded = @move_uploaded_file($_FILES['fichier']['tmp_name'], $destination);
+        
+        if ($uploaded) {
+            $data['nom_fichier'] = $unique_name;
+            $data['nom_original'] = $filename;
+            $data['type_fichier'] = $_FILES['fichier']['type'];
+            $data['taille_fichier'] = $_FILES['fichier']['size'];
+            $data['chemin_fichier'] = $upload_dir . $unique_name;
+        } else {
+            // Erreur lors de l'upload, on continue sans le fichier
+            log_message('error', 'Échec upload fichier: ' . print_r($_FILES['fichier'], true));
+        }
+    }
+    
+    // Déterminer le type d'entrée
+    $has_article = !empty($data['entana_nozaraina']) || !empty($data['designation']);
+    $has_fichier = !empty($data['nom_fichier']);
+    
+    if ($has_article && $has_fichier) {
+        $data['type_entree'] = 'manuel_fichier';
+    } elseif ($has_fichier) {
+        $data['type_entree'] = 'fichier';
+    } else {
+        $data['type_entree'] = 'manuel';
+    }
+    
+    // Vérifier qu'il y a au moins quelque chose à enregistrer
+    if (!$has_article && !$has_fichier) {
+        echo json_encode(['success' => false, 'message' => 'Aucune donnée à enregistrer']);
+        return;
+    }
+    
+    $insert_id = $this->saisie->insert($data);
+    
+    if ($insert_id) {
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Saisie enregistrée avec succès', 
+            'id' => $insert_id,
+            'type' => $data['type_entree']
+        ]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'enregistrement en base de données']);
+    }
+}
 }

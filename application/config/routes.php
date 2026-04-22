@@ -295,3 +295,5 @@ $route['activite/search-projet'] = 'Activite/searchProjet' ;
 $route['Mission/filtre-liquidation'] = 'Mission/filtreliquidation' ; 
 $route['Mission/filtre-reliquat'] = 'Mission/filtreReliquat' ; 
 /************ Search par projet *************** */
+$route['liste-demande/save_saisie_manuelle'] = 'ListeDemande/save_saisie_manuelle';
+$route['liste-demande/verifier_demande'] = 'ListeDemande/verifier_demande';

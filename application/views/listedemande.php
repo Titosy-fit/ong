@@ -91,20 +91,30 @@
                 </div>
 
                 <!-- Bouton Import -->
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <button id="btn_import_data" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#importDataModal">
                         <i class="fa-solid fa-upload"></i> Importer fichier (Excel / PDF / Word / Photo)
                     </button>
-                </div>
+                </div> -->
 <!-- Bouton Import (modal fichier uniquement) -->
 
 <!-- ====================== SAISIE MANUELLE DIRECTE (juste en dessous) ====================== -->
+<!-- ====================== SAISIE MANUELLE DIRECTE ====================== -->
 <div class="mb-4 p-3 border bg-light rounded">
+    <h5 class="mb-3"><i class="fa-solid fa-pen-to-square"></i> Saisie manuelle liée à une demande</h5>
     
-
     <div class="row g-3" id="manualInputs">
-
-       
+        <!-- Numéro de demande (obligatoire pour le lien) -->
+        <div class="col-md-3">
+            <label class="form-label">N° Demande (DM-XXXXX) <span class="text-danger">*</span></label>
+            <div class="input-group">
+                <input type="text" id="manual_num_demande" class="form-control" placeholder="Ex: DM-00001" required>
+                <button type="button" class="btn btn-outline-info" id="btn_verify_demande">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+            </div>
+            <div id="demande_verification_result" class="mt-1"></div>
+        </div>
 
         <div class="col-md-3">
             <label class="form-label">ENTANA NOZARAINA</label>
@@ -145,12 +155,18 @@
             <label class="form-label">Kaominina / Commune</label>
             <input type="text" id="manual_commune" class="form-control" placeholder="Commune">
         </div>
-
+        
+        <!-- Ajout de fichier optionnel -->
+        <div class="col-12">
+            <label class="form-label">Joindre un fichier (optionnel)</label>
+            <input type="file" id="manual_fichier" class="form-control" accept=".xlsx,.xls,.pdf,.doc,.docx,.jpg,.jpeg,.png,.gif">
+            <small class="text-muted">Excel, PDF, Word ou Photo (max 10MB)</small>
+        </div>
     </div>
 
     <div class="text-end mt-3">
-        <button type="button" id="btnSaveManual" class="btn btn-success">
-            <i class="fa-solid fa-save"></i> Enregistrer la saisie manuelle
+        <button type="button" id="btnSaveManual" class="btn btn-success" disabled>
+            <i class="fa-solid fa-save"></i> Enregistrer la saisie
         </button>
     </div>
 </div>
